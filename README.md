@@ -26,8 +26,11 @@ Sorry. This text is pending correction.
 
 It's a opensource library of functions for create aplications in text mode.
 
-Uses MSX BIOS functions. Works in T1 (screen 0) and G1 (screen 1) modes.
-It doesn't work with MSX2's 80-column text mode.
+It uses the functions of the MSX BIOS, so it is designed to create applications 
+in ROM format.
+  
+Works in T1 (screen 0, 40 columns), T2 (screen 0, 80 columns), and G1 (screen 1, 
+32 columns) modes.
 
 For develop MSX applications using Small Device C Compiler (SDCC) compilator.
 
