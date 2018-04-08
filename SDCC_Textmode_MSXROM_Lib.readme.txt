@@ -9,11 +9,9 @@ mail: mvac7303b@gmail.com
 Doc version: 1.0
 
 History of versions:
+    v1.1.1 (8/4/2017)
     v1.1 (27/2/2017)
 
-
-
-Sorry. This text is pending correction.
 
     
 --------------------------------------------------------------------------------
@@ -45,15 +43,17 @@ Index:
 --------------------------------------------------------------------------------
 1 Introduction:
 
-It's a opensource library of functions for create aplications in text mode.
+This project is an Open Source library of functions for creating aplications in 
+text mode.
 
-It uses the functions of the MSX BIOS, so it is designed to create applications 
-in ROM format.
+It uses the functions from the MSX BIOS, so it is designed to create 
+applications in ROM format.
   
 Works in T1 (screen 0, 40 columns), T2 (screen 0, 80 columns), and G1 (screen 1,
 32 columns) modes.
 
-For develop MSX applications using Small Device C Compiler (SDCC) compilator.
+Use them for developing MSX applications using Small Device C Compiler (SDCC) 
+compilator.
 
 
                                                           
@@ -131,8 +131,8 @@ For develop MSX applications using Small Device C Compiler (SDCC) compilator.
  Description: 
            Specifies the number of characters per line in text mode.
  Input:     1 to 40 in T1 40 columns mode
-           41 to 80 in T2 80 columns mode (only MSX with V9938 and BIOS support 
-                                           this mode)
+           41 to 80 in T2 80 columns mode (only MSX with V9938 and a BIOS that 
+                                           supports this mode)
             1 to 32 in G1 mode
  Output:   -
  Examples:
@@ -147,7 +147,7 @@ For develop MSX applications using Small Device C Compiler (SDCC) compilator.
  Function: 
            void COLOR(char ink, char background, char border)
  Description: 
-           Specifies the colors of foreground, background, and border area.
+           Specifies the colors of the foreground, background, and border area.
  Input:    (char) ink (0 to 15)
            (char) background (0 to 15)
            (char) border (0 to 15)
@@ -208,8 +208,8 @@ For develop MSX applications using Small Device C Compiler (SDCC) compilator.
              \? - Question mark
              
              \v - Place the cursor at the top of the screen
-                  Warning!: Does not correspond to Vertical Tab, of standardized 
-                            use in C.
+                  Warning!: This does not correspond to Vertical Tab, 
+                            standardized in C.
                         
  Input:    (char*) String    
  Output:   -
