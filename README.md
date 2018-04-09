@@ -66,14 +66,14 @@ http://sdcc.sourceforge.net/
 
 ## 4. Functions
 
-* void SCREEN0() - Switch to T1 or T2 mode (SCREEN 0), 40 or 80 columns x 24 lines.
-* void SCREEN1() - Switch to G1 mode (SCREEN 1), 32 columns x 24 lines.
-* void WIDTH(char columns) - Specifies the number of characters per line in text mode.
-* void COLOR(char ink, char background, char border) - Specifies the colors of the foreground, background, and border area.
-* void CLS() - Clear the contents of the screen.
-* void LOCATE(char x, char y) - Moves the cursor to the specified location.
-* void PRINT(char* text) - Displays a text string on the screen.
-* void PrintNumber(unsigned int value) - Prints an unsigned integer on the screen.
-* void PrintFNumber(unsigned int value, char emptyChar, char length) - Prints an unsigned integer on the screen with formatting parameters.
-* void num2Dec16(unsigned int aNumber, char *address, char emptyChar) - 16-bit Integer to ASCII (decimal) (by baze)
-* void bchput(char value) - Displays one character (MSX BIOS CHPUT).
+* **void SCREEN0()** - Switch to T1 or T2 mode (SCREEN 0), 40 or 80 columns x 24 lines.
+* **void SCREEN1()** - Switch to G1 mode (SCREEN 1), 32 columns x 24 lines.
+* **void WIDTH(char columns)** - Specifies the number of characters per line in text mode.
+* **void COLOR(char ink, char background, char border)** - Specifies the colors of the foreground, background, and border area.
+* **void CLS()** - Clear the contents of the screen.
+* **void LOCATE(char x, char y)** - Moves the cursor to the specified location.
+* **void PRINT(char* text)** - Displays a text string on the screen.
+* **void PrintNumber(unsigned int value)** - Prints an unsigned integer on the screen.
+* **void PrintFNumber(unsigned int value, char emptyChar, char length)** - Prints an unsigned integer on the screen with formatting parameters.
+* **void num2Dec16(unsigned int aNumber, char *address, char emptyChar)** - 16-bit Integer to ASCII (decimal) (by baze)
+* **void bchput(char value)** - Displays one character (MSX BIOS CHPUT).
