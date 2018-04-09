@@ -14,25 +14,22 @@ WEB:
  
 mail: mvac7303b@gmail.com
 
-Doc version: 1.0
-
-
-
-Sorry. This text is pending correction.
 
 
 
 ## 1. Introduction
 
-It's a opensource library of functions for create aplications in text mode.
+This project is an Open Source library of functions for creating aplications in 
+text mode.
 
-It uses the functions of the MSX BIOS, so it is designed to create applications 
-in ROM format.
+It uses the functions from the MSX BIOS, so it is designed to create 
+applications in ROM format.
   
-Works in T1 (screen 0, 40 columns), T2 (screen 0, 80 columns), and G1 (screen 1, 
+Works in T1 (screen 0, 40 columns), T2 (screen 0, 80 columns), and G1 (screen 1,
 32 columns) modes.
 
-For develop MSX applications using Small Device C Compiler (SDCC) compilator.
+Use them for developing MSX applications using Small Device C Compiler (SDCC) 
+compilator.
 
 
 
@@ -69,14 +66,14 @@ http://sdcc.sourceforge.net/
 
 ## 4. Functions
 
-* void SCREEN0()
-* void SCREEN1()
-* void WIDTH(char columns)
-* void COLOR(char ink, char background, char border)
-* void CLS()
-* void LOCATE(char x, char y)
-* void PRINT(char* text)
-* void PrintNumber(unsigned int value)
-* void PrintFNumber(unsigned int value, char emptyChar, char length)
-* void num2Dec16(unsigned int aNumber, char *address, char emptyChar)
-* void bchput(char value)
+* void SCREEN0() - Switch to T1 or T2 mode (SCREEN 0), 40 or 80 columns x 24 lines.
+* void SCREEN1() - Switch to G1 mode (SCREEN 1), 32 columns x 24 lines.
+* void WIDTH(char columns) - Specifies the number of characters per line in text mode.
+* void COLOR(char ink, char background, char border) - Specifies the colors of the foreground, background, and border area.
+* void CLS() - Clear the contents of the screen.
+* void LOCATE(char x, char y) - Moves the cursor to the specified location.
+* void PRINT(char* text) - Displays a text string on the screen.
+* void PrintNumber(unsigned int value) - Prints an unsigned integer on the screen.
+* void PrintFNumber(unsigned int value, char emptyChar, char length) - Prints an unsigned integer on the screen with formatting parameters.
+* void num2Dec16(unsigned int aNumber, char *address, char emptyChar) - 16-bit Integer to ASCII (decimal) (by baze)
+* void bchput(char value) - Displays one character (MSX BIOS CHPUT).

@@ -1,6 +1,6 @@
 /* =============================================================================
   SDCC MSX ROM TEXTMODE Functions Library (object type)
-  Version: 1.2 (3/4/2018)
+  Version: 1.2
   Author: mvac7/303bcn
   Architecture: MSX
   Format: C Object (SDCC .rel)
@@ -9,10 +9,10 @@
   mail: mvac7303b@gmail.com
 
   Description:
-    Opensource library with functions to work in text mode in Screen 0 and 
-    Screen 1. 
+    Open Source library of functions for creating aplications in text mode. 
     
   History of versions:
+    v1.2 ( 3/4/2018) current version
     v1.1 (27/2/2017)
 ============================================================================= */
 #ifndef __TEXTMODE_H__
@@ -48,6 +48,8 @@
  
   Description: 
            Switch to T1 or T2 mode (SCREEN 0), 40 or 80 columns x 24 lines.
+           Notice: To set the T2 mode, you must first set 80 columns with the 
+           WIDTH instruction.
   Input:    -
   Output:   -
 ============================================================================= */
@@ -73,8 +75,8 @@ void SCREEN1();
   Description: 
             Specifies the number of characters per line in text mode.
   Input:     1 to 40 in T1 40 columns mode
-            41 to 80 in T2 80 columns mode (only MSX with V9938 and BIOS support 
-                                           this mode)
+            41 to 80 in T2 80 columns mode (only MSX with V9938 and a BIOS that 
+                                           supports this mode)
              1 to 32 in G1 mode 
 ============================================================================= */
 void WIDTH(char columns);
@@ -85,7 +87,7 @@ void WIDTH(char columns);
   COLOR
  
   Description: 
-            Specifies the colors of foreground, background, and border area.
+            Specifies the colors of the foreground, background, and border area.
   Input:    (char) ink (0 to 15)
             (char) background (0 to 15)
             (char) border (0 to 15)
@@ -137,8 +139,8 @@ void LOCATE(char x, char y);
              \? - Question mark
              
              \v - Place the cursor at the top of the screen
-                  Warning!: Does not correspond to Vertical Tab, of standardized 
-                            use in C.
+                  Warning: This does not correspond to Vertical Tab, 
+                           standardized in C.
                         
   Input:    (char*) String    
   Output:   -
