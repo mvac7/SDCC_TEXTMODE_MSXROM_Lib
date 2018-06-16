@@ -1,5 +1,5 @@
 /* =============================================================================
-  SDCC MSX ROM TEXTMODE Functions Library (object type)
+  SDCC MSX TEXTMODE Functions Library (object type)
   Version: 1.2
   Author: mvac7/303bcn
   Architecture: MSX
@@ -44,106 +44,112 @@
 
 
 /* =============================================================================
-  SCREEN0
+ SCREEN0
  
-  Description: 
+ Description: 
            Switch to T1 or T2 mode (SCREEN 0), 40 or 80 columns x 24 lines.
            Notice: To set the T2 mode, you must first set 80 columns with the 
            WIDTH instruction.
-  Input:    -
-  Output:   -
+ Input:    -
+ Output:   -
 ============================================================================= */
 void SCREEN0();
 
 
 
 /* =============================================================================
-  SCREEN1
+ SCREEN1
  
-  Description: 
+ Description: 
            Switch to G1 mode (SCREEN 1), 32 columns x 24 lines.
-  Input:    -
-  Output:   -
+ Input:    -
+ Output:   -
 ============================================================================= */
 void SCREEN1();
 
 
 
 /* =============================================================================
-  WIDTH
+ WIDTH
  
-  Description: 
-            Specifies the number of characters per line in text mode.
-  Input:     1 to 40 in T1 40 columns mode
-            41 to 80 in T2 80 columns mode (only MSX with V9938 and a BIOS that 
+ Description: 
+           Specifies the number of characters per line in text mode.
+ Input:     1 to 40 in T1 40 columns mode
+           41 to 80 in T2 80 columns mode (only MSX with V9938 and a BIOS that 
                                            supports this mode)
-             1 to 32 in G1 mode 
+            1 to 32 in G1 mode
+ Output:   - 
 ============================================================================= */
 void WIDTH(char columns);
 
 
 
 /* =============================================================================
-  COLOR
+ COLOR
  
-  Description: 
-            Specifies the colors of the foreground, background, and border area.
-  Input:    (char) ink (0 to 15)
-            (char) background (0 to 15)
-            (char) border (0 to 15)
+ Description: 
+           Specifies the colors of the foreground, background, and border area.
+ Input:    (char) ink (0 to 15)
+           (char) background (0 to 15)
+           (char) border (0 to 15)
+ Output:   -
 ============================================================================= */
 void COLOR(char ink, char background, char border);
 
 
 
 /* =============================================================================
-  CLS
+ CLS
  
-  Description: 
-            Clear the contents of the screen.
-  Input:    -        
-  Output:   - 
+ Description: 
+           Clear the contents of the screen.
+           Fill screen map with 0x20 character.
+ Input:    -        
+ Output:   - 
 ============================================================================= */
 void CLS();
 
 
 
 /* =============================================================================
-  LOCATE
+ LOCATE
  
-  Description: 
-            Moves the cursor to the specified location.
-  Input:    (char) Position X of the cursor. (0 to 31 or 79)
-            (char) Position Y of the cursor. (0 to 23)         
-  Output:   -
+ Description: 
+           Moves the cursor to the specified location.
+ Input:    (char) Position X of the cursor. (0 to 31 or 79)
+           (char) Position Y of the cursor. (0 to 23)         
+ Output:   -
 ============================================================================= */
 void LOCATE(char x, char y);
 
 
 
 /* =============================================================================
-  PRINT
+ PRINT
   
-  Description: 
-           Displays a text string on the screen.
-           
-           Supports escape secuences:
-             \n - Newline > Line Feed and Carriage Return (CRLF) 
-             \r - Carriage Return
-             \t - Horizontal Tab
-             \a - Beep
-             \f - Formfeed. Clear screen and place the cursor at the top.
-             \\ - Backslash
-             \' - Single quotation mark
-             \" - Double quotation mark
-             \? - Question mark
-             
-             \v - Place the cursor at the top of the screen
-                  Warning: This does not correspond to Vertical Tab, 
-                           standardized in C.
+ Description: 
+           Displays a text string on the screen.             
                         
-  Input:    (char*) String    
-  Output:   -
+ Input:    (char*) String    
+ Output:   -
+ Notes:
+            Supports escape sequences:
+             \a (0x07) - Beep
+             \b (0x08) - Backspace. Cursor left, wraps around to previous line, 
+                         stop at top left of screen.
+             \t (0x09) - Horizontal Tab. Tab, overwrites with spaces up to next 
+                         8th column, wraps around to start of next line, scrolls
+                         at bottom right of screen.
+             \n (0x0A) - Newline > Line Feed and Carriage Return (CRLF) 
+                         Note: CR added in this Lib.
+             \v (0x0B) - Cursor home. Place the cursor at the top of the screen.
+             \f (0x0C) - Formfeed. Clear screen and place the cursor at the top. 
+             \r (0x0D) - CR (Carriage Return)
+            
+             \" (0x22) - Double quotation mark
+             \' (0x27) - Single quotation mark
+             \? (0x3F) - Question mark
+             \\ (0x5C) - Backslash
 ============================================================================= */
 void PRINT(char* text);
 
@@ -154,12 +160,12 @@ void PRINT(char* text);
 
 
 /* =============================================================================
-  PrintNumber
+ PrintNumber
 
-  Description: 
-            Prints an unsigned integer on the screen.  
-  Input:    (unsigned int) numeric value          
-  Output:   -
+ Description: 
+           Prints an unsigned integer on the screen.  
+ Input:    (unsigned int) numeric value          
+ Output:   -
 ============================================================================= */
 void PrintNumber(unsigned int value);
 
@@ -167,50 +173,70 @@ void PrintNumber(unsigned int value);
 
 
 /* =============================================================================
-  PrintFNumber
+ PrintFNumber
 
-  Description: 
+ Description: 
            Prints an unsigned integer on the screen with formatting parameters.
-  Input:   (unsigned int or char) numeric value
+ Input:    (unsigned int) numeric value
            (char) empty Char: (32=' ', 48='0', etc.)
            (char) length: 1 to 5          
-  Output:   -  
+ Output:   -  
 ============================================================================= */
 void PrintFNumber(unsigned int value, char emptyChar, char length);
 
 
 
 /* =============================================================================
-  num2Dec16
+ num2Dec16
  
-  Description: 
-            16-bit Integer to ASCII (decimal)
-            Based on the code by baze.
-  Input:    (unsigned int) a number
-            (char*) Address where the output string is provided.
-            (char) empty Char: 32=space, 48=zero
-  Output:   -
+ Description: 
+           16-bit Integer to ASCII (decimal)
+           Based on the code by baze.
+ Input:    (unsigned int) a number
+           (char*) Address where the output string is provided.
+           (char) empty Char: 32=space, 48=zero
 ============================================================================= */
 void num2Dec16(unsigned int aNumber, char *address, char emptyChar);
 
 
 
 /* =============================================================================
-  bchput
-  
-  Description: Displays one character (MSX BIOS CHPUT)
-  Input:    (char) - char value          
-  Output:   -
+ bchput
+ 
+ Description: 
+         Displays one character (MSX BIOS CHPUT).
+ Input:   (char) text char
+ Output:  -
 ============================================================================= */
 void bchput(char value);
-
 
 
 
 /* =============================================================================
    Current row-position of the cursor
 ============================================================================= */
-//char getLine();
+//char GetRow()
+
+
+
+/* =============================================================================
+Current column-position of the cursor
+============================================================================= */
+//char GetColumn()
+
+
+
+/* =============================================================================
+   Displays the function keys
+============================================================================= */
+//void KEYON()
+
+
+
+/* =============================================================================
+   Erase functionkey display
+============================================================================= */
+//void KEYOFF()
 
 
 
