@@ -56,10 +56,9 @@ Works in T1 (screen 0, 40 columns), T2 (screen 0, 80 columns), and G1 (screen 1,
 It uses the functions from the MSX BIOS, so it is designed to create 
 applications in ROM format.
 
-Use them for developing MSX applications using Small Device C Compiler (SDCC) 
-compilator.
+Use them for developing MSX applications using Small Device C Compiler (SDCC).
 
-Include a application for test and learning purposes.
+Includes an application for test and learning purposes.
 
 
                                                           
