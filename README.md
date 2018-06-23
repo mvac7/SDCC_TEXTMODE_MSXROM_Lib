@@ -28,10 +28,9 @@ applications in ROM format.
 Works in T1 (screen 0, 40 columns), T2 (screen 0, 80 columns), and G1 (screen 1,
 32 columns) modes.
 
-Use them for developing MSX applications using Small Device C Compiler (SDCC) 
-compilator.
+Use them for developing MSX applications using Small Device C Compiler (SDCC).
 
-
+Includes an application for test and learning purposes.
 
 ## 2. Acknowledgments
   
