@@ -1,19 +1,27 @@
 /* =============================================================================
   SDCC MSX ROM TEXTMODE Functions Library (object type)
-  Version: 1.2 (3/4/2018)
+  Version: 1.3 (5/9/2019)
   Author: mvac7/303bcn
   Architecture: MSX
   Format: C Object (SDCC .rel)
-  Programming language: C
+  Programming language: C + Assembler
   WEB: 
   mail: mvac7303b@gmail.com
 
   Description:
-    Opensource library with functions to work in text mode in Screen 0 and 
-    Screen 1. 
+    Opensource library with functions to work in text mode in Screen 0 (40/80
+    columns), and Screen 1. 
+    
+    Use them for developing MSX applications using Small Device C Compiler  
+    (SDCC) compilator.
+    
+    16-bit Integer to ASCII based on num2Dec16 by baze
+    http://baze.sk/3sc/misc/z80bits.html#5.1
     
   History of versions:
-    v1.1 (27/2/2017) 
+  - v1.3 (05/09/2019)
+  - v1.2 (03/04/2018)
+  - v1.1 (27/02/2017) 
 ============================================================================= */
 #include "../include/textmode.h"
 
@@ -22,7 +30,7 @@
 
 
 char CSTATE;
-
+char FNUMSIZE;
 
 
 /* =============================================================================
@@ -35,7 +43,7 @@ char CSTATE;
   Input:    -
   Output:   -
 ============================================================================= */
-void SCREEN0()
+void SCREEN0() __naked
 {
 __asm
  
@@ -43,7 +51,7 @@ __asm
   ld   (#LINL40),A   ;copy columns seting with WIDTH to LINL40 system var
                      
   call INITXT
-  
+  ret
 __endasm;
 }
 
@@ -57,7 +65,7 @@ __endasm;
   Input:    -
   Output:   -
 ============================================================================= */
-void SCREEN1()
+void SCREEN1() __naked
 {
 __asm
   
@@ -65,7 +73,7 @@ __asm
   ld   (#LINL32),A   ;set system variable
      
   call INIT32
-  
+  ret
 __endasm;
 }
 
@@ -81,7 +89,7 @@ __endasm;
                                             supports this mode)
              1 to 32 in G1 mode 
 ============================================================================= */
-void WIDTH(char columns)
+void WIDTH(char columns) __naked
 {
 columns;
 __asm
@@ -93,6 +101,7 @@ __asm
   ld   (#LINLEN),A
     
   pop  IX
+  ret
 __endasm;  
 }
 
@@ -107,7 +116,7 @@ __endasm;
             (char) background (0 to 15)
             (char) border (0 to 15)
 ============================================================================= */
-void COLOR(char ink, char background, char border)
+void COLOR(char ink, char background, char border) __naked
 {
 ink;background,border;
 __asm
@@ -128,6 +137,7 @@ __asm
   call CHGCLR
   
   pop  IX
+  ret
 __endasm;
 }
 
@@ -153,11 +163,12 @@ SCR0:
   Input:    -        
   Output:   -
 ============================================================================= */
-void CLS()
+void CLS() __naked
 {
 __asm
   xor  A
   call BCLS
+  ret
 __endasm;
 }
 
@@ -172,7 +183,7 @@ __endasm;
             (char) Position Y of the cursor. (0 to 23)         
   Output:   -
 ============================================================================= */
-void LOCATE(char x, char y)
+void LOCATE(char x, char y) __naked
 {
 x;y;
 __asm
@@ -189,6 +200,7 @@ __asm
   call POSIT
   
   pop  IX
+  ret
 __endasm;
 
 }
@@ -258,19 +270,7 @@ void PRINT(char* text)
 ============================================================================= */
 void PrintNumber(unsigned int value)
 {
-  char character;
-  char text[]="     ";
-  char *p;	
-
-  num2Dec16(value, text,32); 
-  
-  p = text;  
-  
-  while(*(p))
-  {
-    character=*(p++);
-    if (character!=32) bchput(character);
-  }   
+  PrintFNumber(value,0,5);   
 }
 
 
@@ -285,40 +285,11 @@ void PrintNumber(unsigned int value)
            (char) length: 1 to 5          
   Output:   -
 ============================================================================= */
-void PrintFNumber(unsigned int value, char emptyChar, char length)
+void PrintFNumber(unsigned int value, char emptyChar, char length) __naked
 {
-  char pos=5;
-  char text[]="     ";
-
-  num2Dec16(value, text,emptyChar); //32=space, 48=zero 
-  
-  if(length>5) length=5;
-  if(length==0) length=5;
-  //coloca el puntero en la posicion donde se ha de empezar a mostrar 
-  pos-=length;
-  
-  // muestra el numero en la pantalla
-  while (length-->0){ bchput(text[pos++]);}
-}
-
-
-
-/* =============================================================================
-  num2Dec16
- 
-  Description: 
-            16-bit Integer to ASCII (decimal)
-            Based on the code by baze.
-  Input:    (unsigned int) a number
-            (char*) Address where the output string is provided.
-            (char) empty Char: 32=space, 48=zero
-  Output:   -
-============================================================================= */
-void num2Dec16(unsigned int aNumber, char *address, char emptyChar)
-{
-  aNumber;
-  address;
+  value;       //to avoid warnings
   emptyChar;
+  length;
 __asm
   push IX
   ld   IX,#0
@@ -326,14 +297,21 @@ __asm
   
   ld   L,4(ix)
   ld   H,5(ix)
-  
-;if (HL<0) Print "-" 
-  
-  ld   E,6(ix)
-  ld   D,7(ix)
-  
-  ld   A,8(ix)   ;#32
+ 
+  ld   A,6(ix)        ;empty char
   ld   (#_CSTATE),A
+  
+  ld   D,7(ix)        ;length
+
+  ld   IY,#_FNUMSIZE  ;variable for print size control
+  ld   (IY),#5        ;init
+  
+
+;for a future version with negative numbers  
+;if (HL<0) Print "-" 
+;   ld   A,#45
+;   call $Num4
+
   	
   ld   BC,#-10000
 	call $Num1
@@ -345,7 +323,7 @@ __asm
 	call $Num1
   ;Last figure
 	ld	 C,B
-  ld   A,#48
+  ld   A,#48          ;"0"
   ld   (#_CSTATE),A
 	call $Num1
 
@@ -354,16 +332,16 @@ __asm
   ret
     
 $Num1:	
-  ld	 A,#47 ; 0 ASCII code - 1
+  ld	 A,#47     ;"0" ASCII code - 1
    
-$Num2:	
+$Num2:
   inc	 A
 	add	 HL,BC
 	jr	 C,$Num2
 	
 	sbc	 HL,BC
 	
-	cp   #48   ;"0" ASCII code    
+	cp   #48       ;"0" ASCII code    
 	jr   NZ,$Num3  ;if A!=48 then goto $Num3
 	
 	ld   A,(#_CSTATE)
@@ -372,18 +350,26 @@ $Num2:
 
 $Num3:
   ;change space for 0 zero ASCII code
-  push AF
+  ex   AF,AF
   ld   A,#48
   ld   (#_CSTATE),A
-  pop  AF	
+  ex   AF,AF	
 	
-$Num4:	
-	ld	 (DE),A   ;save a ascii code
-	inc	 DE
-		
-	ret
+$Num4:
+  ld   E,A
+;  ld   IY,#_FNUMSIZE
+  dec  (IY)
+  ld   A,(IY)
+  cp   D
+  ret  NC
   
-$Num5:
+  ld   A,E
+  or   A
+  ret  Z  ;only print A>0
+  
+  jp   CHPUT
+		
+;	ret
     
 __endasm;
 }
@@ -397,7 +383,7 @@ __endasm;
   Input:    (char) - char value          
   Output:   -
 ============================================================================= */
-void bchput(char value)
+void bchput(char value) __naked
 {
 value;
 __asm
@@ -409,6 +395,7 @@ __asm
   call CHPUT
   
   pop  IX
+  ret
 __endasm;
 }
 

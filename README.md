@@ -1,6 +1,6 @@
 # SDCC MSX ROM TEXTMODE Functions Library (object type)
 
-Version: 1.2 (3/4/2018)
+Version: 1.3 (5/9/2018)
 
 Author: mvac7/303bcn
 
@@ -8,7 +8,7 @@ Architecture: MSX
 
 Format: C Object (SDCC .rel)
 
-Programming language: C
+Programming language: C + Assembler
 
 WEB:
  
@@ -16,21 +16,31 @@ mail: mvac7303b@gmail.com
 
 
 
+### History of versions:
+
+- v1.3 (05/09/2019)< Integer printing functions improved (PrintNumber & PrintFNumber).
+                     num2Dec16 becomes PrintFNumber.
+- v1.2 (03/04/2018)
+- v1.1 (27/02/2017)
+
+
 
 ## 1. Introduction
 
-This project is an Open Source library of functions for creating aplications in 
-text mode.
+This project is an Open Source library of functions for creating aplications in text mode.
 
-It uses the functions from the MSX BIOS, so it is designed to create 
-applications in ROM format.
+It uses the functions from the MSX BIOS, so it is designed to create applications in ROM format.
   
-Works in T1 (screen 0, 40 columns), T2 (screen 0, 80 columns), and G1 (screen 1,
-32 columns) modes.
+Works in T1 (screen 0, 40 columns), T2 (screen 0, 80 columns), and G1 (screen 1, 32 columns) modes.
 
 Use them for developing MSX applications using Small Device C Compiler (SDCC).
 
 Includes an application for test and learning purposes.
+
+The whole number printing function is programmed from routine num2Dec16 published by Baze.
+http://baze.sk/3sc/misc/z80bits.html#5.1
+
+
 
 ## 2. Acknowledgments
   
@@ -73,5 +83,4 @@ Thanks for Info & help, to:
 * void PRINT(char* text) - Displays a text string on the screen.
 * void PrintNumber(unsigned int value) - Prints an unsigned integer on the screen.
 * void PrintFNumber(unsigned int value, char emptyChar, char length) - Prints an unsigned integer on the screen with formatting parameters.
-* void num2Dec16(unsigned int aNumber, char *address, char emptyChar) - 16-bit Integer to ASCII (decimal) (by baze)
 * void bchput(char value) - Displays one character (MSX BIOS CHPUT).
