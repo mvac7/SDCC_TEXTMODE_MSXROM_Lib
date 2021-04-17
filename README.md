@@ -19,7 +19,7 @@ It uses the functions from the MSX BIOS, so it is designed to create application
 
 Use them for developing MSX applications using Small Device C Compiler (SDCC).
 
-Two applications are included in the source code for testing and learning purposes.
+In the source code (\examples), you can find applications for testing and learning purposes.
 
 I have adapted a routine for converting a 16 Bits value to ASCII, extracted from the Baze collection [(WEB)](http://baze.sk/3sc/misc/z80bits.html#5.1), for printing numbers. 
 

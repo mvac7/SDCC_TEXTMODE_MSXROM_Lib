@@ -1,12 +1,10 @@
 /* =============================================================================
   Test > SDCC MSX ROM TEXTMODE Functions Library (object type)
-  Version: 1.2 (6/04/2018) 
-   
+  Version: 1.3 (6/04/2018)
+      
   Description:
-    Test Textome Lib T1 40 columns and G1 32 columns modes.
+    Test Textome Lib T2 80 columns.
     
-  History of versions:
-    v1.1 (27/02/2017)
 ============================================================================= */
 
 #include "../include/newTypes.h"
@@ -30,8 +28,7 @@ char INKEY();
 
 void WAIT(uint cicles);
 
-void test_SC0();
-void test_SC1();
+void test_SC080();
 
 void testWIDTH();
 void testPRINT();
@@ -41,9 +38,9 @@ void testCLS();
 
 // constants  ------------------------------------------------------------------
 const char text01[] = "Test SDCC textmode ROM Lib";
-const char text02[] = "v1.2 (6/04/2018)";
+const char text02[] = "v1.3 (6/04/2018) 80col";
 
-const char testString[] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+const char testString[] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
 const char presskey[] = "Press a key to continue";
 // global variable definition --------------------------------------------------
@@ -64,22 +61,21 @@ void main(void)
   
   LOCATE(3,10);
   PRINT(text01);
-  LOCATE(7,11);
+  LOCATE(5,11);
   PRINT(text02);  
   
   INKEY();
       
-  test_SC0();
-  test_SC1();
+  test_SC080();
   
   CLS();
   PRINT("END");
-  WAIT(30*5);  
+  WAIT(30*5);
 }
 
 
 
-char PEEK(uint address)
+char PEEK(uint address) __naked
 {
 address;
 __asm
@@ -93,12 +89,13 @@ __asm
 
   ld   L,A
   pop  IX
+  ret
 __endasm;
 }
 
 
 
-void POKE(uint address, char value)
+void POKE(uint address, char value) __naked
 {
 address;value;
 __asm
@@ -111,13 +108,14 @@ __asm
   ld   A,6(IX)
   ld   (HL),A
 
-  pop  IX  
+  pop  IX
+  ret  
 __endasm;
 }
 
 
 
-char VPEEK(uint address)
+char VPEEK(uint address) __naked
 {
 address;
 __asm
@@ -132,6 +130,7 @@ __asm
   
   ld   L,A
   pop  IX
+  ret
 __endasm;
 }
 
@@ -140,10 +139,12 @@ __endasm;
 /* =============================================================================
 One character input (waiting)
 ============================================================================= */
-char INKEY(){
+char INKEY() __naked
+{
 __asm   
    call CHGET
    ld   L,A
+   ret
 __endasm;
 }
 
@@ -160,16 +161,16 @@ void WAIT(uint cicles)
 
 
 
-void test_SC0()
+void test_SC080()
 {
  
   COLOR(LIGHT_GREEN,DARK_GREEN,DARK_GREEN);      
 
-  WIDTH(40);
+  WIDTH(80);
   SCREEN0();
   
   LOCATE(0,0);  
-  PRINT(">Test SCREEN0()\n\r");
+  PRINT(">Test SCREEN0()\n");
   
   testWIDTH();
   
@@ -190,33 +191,6 @@ void test_SC0()
 
 
 
-// TEST ###############################################################
-void test_SC1()
-{
-
-  COLOR(WHITE,LIGHT_BLUE,DARK_BLUE);      
-
-  WIDTH(32);
-  SCREEN1();  
-  
-  LOCATE(0,0);
-  PRINT(">Test SCREEN1()\n\r");
-  
-  testWIDTH();
-  
-  testPRINT();
-  testPrintNumber();
-  
-  testCLS();
-  LOCATE(0,17);
-  if (VPEEK(0x1800)==62) PRINT(">>> ERROR");  // ">"=62
-  else PRINT(">> OK");
-  
-  LOCATE(0,22);
-  PRINT("Press a key to exit");
-  INKEY();
- 
-}
 
 
 
@@ -229,7 +203,7 @@ void testWIDTH()
   PRINT(">Test WIDTH(");
   PrintNumber(columns);
   PRINT(")\n");
-  PRINT("----5---10---15---20---25---30---35---40\n");
+  PRINT("----5---10---15---20---25---30---35---40---45---50---55---60---65---70---75---80");
   PRINT("\n");
 }
 

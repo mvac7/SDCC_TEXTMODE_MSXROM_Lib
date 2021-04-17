@@ -4,5 +4,5 @@ echo MAKEDIR build
 md build
 :NEXTSTEP1
 echo Compiling Object
-sdcc -mz80 -c -o build\  src\textmode_ROM.c
+sdcc -mz80 -c -o build\  src\textmode_MSXROM.c
 pause
