@@ -1,106 +1,105 @@
 /* =============================================================================
-  SDCC MSX ROM TEXTMODE Functions Library (object type)
-  Version: 1.3 (5/9/2019)
-  Author: mvac7/303bcn
-  Architecture: MSX
-  Format: C Object (SDCC .rel)
-  Programming language: C + Assembler
-  WEB: 
-  mail: mvac7303b@gmail.com
+	MSX ROM TEXTMODE Library (fR3eL Project)
+	Version: 1.4 (24/11/2023)
+	Author: mvac7/303bcn
+	Architecture: MSX
+	Format: C Object (SDCC .rel)
+	Programming language: C and Z80 assembler
+	Compiler: SDCC 4.3 or newer 
 
-  Description:
-    Opensource library with functions to work in text mode in Screen 0 (40/80
-    columns), and Screen 1. 
-    
-    Use them for developing MSX applications using Small Device C Compiler  
-    (SDCC) compilator.
-    
-    16-bit Integer to ASCII based on num2Dec16 by baze
-    http://baze.sk/3sc/misc/z80bits.html#5.1
-    
-  History of versions:
-  - v1.3 (05/09/2019)
-  - v1.2 (03/04/2018)
-  - v1.1 (27/02/2017) 
+	Description:
+	 Library with functions to work in text mode in Screen 0 (40/80 columns), 
+	 and Screen 1. 
+
+	 It is designed to develop MSX applications using Small Device C Compiler 
+	 (SDCC), although it is an opensource project. Feel free to use part or 
+	 all of it to adapt it to other systems or development environments.
+
+	 16-bit Integer to ASCII based on num2Dec16 by baze
+	 http://baze.sk/3sc/misc/z80bits.html#5.1
+
+	History of versions:
+	- v1.4 (24/11/2023) update to SDCC (4.1.12) Z80 calling conventions,
+					    add PrintLN function, remove bchput,
+					    and more improvements.
+	- v1.3 (05/09/2019)
+	- v1.2 (03/04/2018)
+	- v1.1 (27/02/2017) 
 ============================================================================= */
-#include "../include/textmode.h"
+#include "../include/textmode_MSX.h"
 
-#include "../include/msxsystemvars.h"
+#include "../include/msxSystemVariables.h"
 #include "../include/msxBIOS.h"
 
 
-char CSTATE;
-char FNUMSIZE;
-
 
 /* =============================================================================
-  SCREEN0
+ SCREEN0
  
-  Description: 
-           Switch to T1 or T2 mode (SCREEN 0), 40 or 80 columns x 24 lines.
-           Notice: To set the T2 mode, you must first set 80 columns with the 
-           WIDTH instruction.
-  Input:    -
-  Output:   -
+ Description: 
+			Initialice TEXT 1 (40 columns) or TEXT 2 (80 columns) screen mode.
+		   
+			Note: 
+			To set the T2 mode, you must first set 80 columns with the WIDTH 
+			function (only MSX computers with V9938 and BIOS that supports 
+			this mode).
+		   
+ Input:    -
+ Output:   -
 ============================================================================= */
-void SCREEN0() __naked
+void SCREEN0(void) __naked
 {
 __asm
  
   ld   A,(#LINLEN)
   ld   (#LINL40),A   ;copy columns seting with WIDTH to LINL40 system var
-                     
-  call INITXT
-  ret
+  
+  jp   BIOS_INITXT
+
 __endasm;
 }
 
 
 
 /* =============================================================================
-  SCREEN1
+ SCREEN1
  
-  Description: 
-           Switch to G1 mode (SCREEN 1), 32 columns x 24 lines.
-  Input:    -
-  Output:   -
+ Description: 
+           Initialice GRAPHIC 1 screen mode (32 columns x 24 lines).
+ Input:    -
+ Output:   -
 ============================================================================= */
-void SCREEN1() __naked
+void SCREEN1(void) __naked
 {
 __asm
   
   ld   A,(#LINLEN)   ;get a last value set with WIDTH function 
   ld   (#LINL32),A   ;set system variable
-     
-  call INIT32
-  ret
+
+  jp   BIOS_INIT32
+  
 __endasm;
 }
 
 
 
 /* =============================================================================
-  WIDTH
+ WIDTH
  
-  Description: 
-            Specifies the number of characters per line in text mode.
-  Input:     1 to 40 in T1 40 columns mode
-            41 to 80 in T2 80 columns mode (only MSX with V9938 and a BIOS that 
-                                            supports this mode)
-             1 to 32 in G1 mode 
+ Description: 
+           Specifies the number of characters per line in text mode.
+ Input:     1 to 40 in TEXT 1 mode (40 columns)
+           41 to 80 in TEXT 2 mode (80 columns)
+            1 to 32 in GRAPHIC 1 mode
+ Output:   - 
 ============================================================================= */
 void WIDTH(char columns) __naked
 {
 columns;
 __asm
-  push IX
-  ld   IX,#0
-  add  IX,SP
-  
-  ld   A,4(IX)
+
   ld   (#LINLEN),A
-    
-  pop  IX
+
   ret
 __endasm;  
 }
@@ -111,202 +110,213 @@ __endasm;
   COLOR
  
   Description: 
-            Specifies the colors of the foreground, background, and border area.
+			Specifies the colors of the foreground, background, and border area.
+			Note: In TEST 1 mode the border color has no effect. 
+			
   Input:    (char) ink (0 to 15)
-            (char) background (0 to 15)
-            (char) border (0 to 15)
+			(char) background (0 to 15)
+			(char) border (0 to 15)
 ============================================================================= */
-void COLOR(char ink, char background, char border) __naked
+void COLOR(char ink, char background, char border) 
 {
 ink;background,border;
 __asm
   push IX
   ld   IX,#0
   add  IX,SP
-  
-  ld   IY,#FORCLR
-  ld   A,4(IX)
-  ld   (IY),A
 
-  ld   A,5(IX)
-  ld   1(IY),A
+  ld   B,L         ; 5c
+  ld   C,4(IX)     ;21c
+
+  ld   HL,#FORCLR  ;11c
+  ld   (HL),A      ; 8c
+  inc  HL          ; 7c
+  ld   (HL),B      ; 8c
+  inc  HL          ; 7c
+  ld   (HL),C      ; 8c
+;total ------------>75c
   
-  ld   A,6(IX)
-  ld   2(IY),A 
-  
-  call CHGCLR
+;  ld   IY,#FORCLR  ; 16c 
+;  ld   (IY),A      ; 21c
+;  ld   1(IY),L     ; 21c
+;  ld   A,4(IX)     ; 21c
+;  ld   2(IY),A     ; 21c
+;total-------------->100c  
+
+  call BIOS_CHGCLR
   
   pop  IX
-  ret
+
 __endasm;
 }
 
-
-
-/*
-;detect screen 0 or screen 1
-  ld   A,(#RG1SAV)  ;mira el valor guardado en las variables de sistema del registro 1 del VDP
-  bit  4,A
-  jr   NZ,SCR0    ;IF A=1 THEN is screen 0 
-
-  jr  END
-SCR0:
-
-*/
 
 
 /* =============================================================================
   CLS
  
   Description: 
-            Clear the contents of the screen.
+			Clear Screen. Fill Pattern Name Table with 0x20 character.
   Input:    -        
   Output:   -
 ============================================================================= */
-void CLS() __naked
+void CLS(void) __naked
 {
 __asm
   xor  A
-  call BCLS
-  ret
+  jp   BIOS_BCLS
 __endasm;
 }
 
 
 
 /* =============================================================================
-  LOCATE
+ LOCATE
  
-  Description: 
-            Moves the cursor to the specified location.
-  Input:    (char) Position X of the cursor. (0 to 31 or 79)
-            (char) Position Y of the cursor. (0 to 23)         
-  Output:   -
+ Description: 
+           Moves the cursor to the specified location.
+		   
+ Input:    (char) Position X of the cursor. TEXT 1 (0 to 39) 
+											TEXT 2 (0 to 79)
+											GRAPHIC 1 (0 to 31)
+           (char) Position Y of the cursor. (0 to 23)         
+ Output:   -
 ============================================================================= */
 void LOCATE(char x, char y) __naked
 {
-x;y;
+x;
+y;
 __asm
-  push IX
-  ld   IX,#0
-  add  IX,SP
-  
-  ld   A,4(IX) ;x
-  inc  A       ;incrementa las posiciones para que se situen correctamente en la pantalla
-  ld   H,A
-  ld   A,5(IX) ;y
+
   inc  A
-  ld   L,A   
-  call POSIT
+  ld   H,A
+
+  inc  L
   
-  pop  IX
-  ret
+  jp   BIOS_POSIT
+
 __endasm;
-
 }
 
 
 
 /* =============================================================================
-  PRINT
+ PRINT
   
-  Description: 
-           Displays a text string on the screen.
-           
-           Supports escape secuences:
-             \n - Newline > Line Feed and Carriage Return (CRLF) 
-             \r - Carriage Return
-             \t - Horizontal Tab
-             \a - Beep
-             \f - Formfeed. Clear screen and place the cursor at the top.
-             \\ - Backslash
-             \' - Single quotation mark
-             \" - Double quotation mark
-             \? - Question mark
-             
-             \v - Place the cursor at the top of the screen
-                  Warning: This does not correspond to Vertical Tab, 
-                           standardized in C.
+ Description: 
+			Displays a text string in the last position where the cursor is.
+			Use the LOCATE function when you need to indicate a specific position.
                         
-  Input:    (char*) String    
-  Output:   -
-============================================================================= */
-void PRINT(char* text)
-{
-  char character;
-  
-  while(*(text)) 
-  {
-    character=*(text++);
-    if (character=='\n')
-    {
-      bchput(10); //LF (Line Feed)
-      bchput(13); //CR (Carriage Return)
-    }else{ 
-      bchput(character);
-    } 
-  }
-}
-
-
-
-/*void printf(char* text)
-{
-  PRINT(text);
-  
-  bchput(10);
-  bchput(13); 
-}*/
-
-
-
-/* =============================================================================
-  PrintNumber
-
-  Description: 
-            Prints an unsigned integer on the screen.  
-  Input:    (unsigned int) numeric value          
-  Output:   -
-============================================================================= */
-void PrintNumber(unsigned int value)
-{
-  PrintFNumber(value,0,5);   
-}
-
-
-
-/* =============================================================================
-  PrintFNumber
-
-  Description: 
-           Prints an unsigned integer on the screen with formatting parameters.
-  Input:   (unsigned int or char) numeric value
-           (char) empty Char: (32=' ', 48='0', etc.)
-           (char) length: 1 to 5          
-  Output:   -
-============================================================================= */
-void PrintFNumber(unsigned int value, char emptyChar, char length) __naked
-{
-  value;       //to avoid warnings
-  emptyChar;
-  length;
-__asm
-  push IX
-  ld   IX,#0
-  add  IX,SP
-  
-  ld   L,4(ix)
-  ld   H,5(ix)
+ Input:    (char*) String    
+ Output:   -
  
-  ld   A,6(ix)        ;empty char
-  ld   (#_CSTATE),A
-  
-  ld   D,7(ix)        ;length
+ Notes:
+            Supports escape sequences:
+             \a (0x07)	- Beep
+             \b (0x08)	- Backspace. Cursor left, wraps around to previous line, 
+                          stop at top left of screen.
+             \t (0x09)	- Horizontal Tab. Tab, overwrites with spaces up to next 
+                          8th column, wraps around to start of next line, scrolls
+                          at bottom right of screen.
+             \n (0x0A)	- Newline > Line Feed and Carriage Return (CRLF) 
+                          Note: CR added in this Library.
+             \v (0x0B)	- Cursor home. Place the cursor at the top of the screen.
+						  Warning: This does not correspond to Vertical Tab, 
+						  standardized in C.
+             \f (0x0C)	- Formfeed. Clear screen and place the cursor at the top. 
+             \r (0x0D)	- CR (Carriage Return)
+            
+             \" (0x22)	- Double quotation mark
+             \' (0x27)	- Single quotation mark
+             \? (0x3F)	- Question mark
+			 \\ (0x5C)	- Backslash
+			 
+			 \xhh		- Print in the output the character/code given in the 
+                         hexadecimal value (hh).
+						 
+			 \1\xHH		- Print Extended Graphic Characters. HH = character + 0x40
+============================================================================= */
+void PRINT(char* text) __naked
+{
+text;  
+__asm  
+PRNLOOP$:
+	ld   A,(hl)
+	or   A
+	ret	 Z
 
-  ld   IY,#_FNUMSIZE  ;variable for print size control
-  ld   (IY),#5        ;init
-  
+	inc	 HL
+	
+	cp   #0x0A       ;\n
+	call Z,PRN_LFCR
+	
+	call BIOS_CHPUT
+	jr   PRNLOOP$
+	
+PRN_LFCR:
+;	ld	 A,#0x0a  ;\n
+	call BIOS_CHPUT
+	ld	 A,#0x0d  ;\r
+;   call BIOS_CHPUT	
+	ret
+	
+__endasm;
+}
 
+
+
+/* =============================================================================
+ PrintLN
+  
+ Description: 
+           Displays a text string in the last position where the cursor is 
+		   and adds a new line (CRLF).   
+                        
+ Input:    (char*) String    
+ Output:   -
+============================================================================= */
+void PrintLN(char* text) __naked
+{
+text;
+__asm
+    call PRNLOOP$
+	ld	 A,#0x0a
+	call PRN_LFCR
+	jp   BIOS_CHPUT
+__endasm;
+}
+
+
+
+/* =============================================================================
+ PrintNumber
+
+ Description: 
+            Displays an unsigned integer in the last position where the cursor is.
+
+			16-bit Integer to ASCII (decimal) based on num2Dec16 by baze
+			https://baze.sk/3sc/misc/z80bits.html#5.1
+			
+ Input:    (unsigned int) numeric value          
+ Output:   -
+============================================================================= */
+void PrintNumber(unsigned int value) __naked
+{
+value;	//HL 
+__asm  
+  ld   D,#0
+  ld   E,#5
+  //  PrintFNumber(value,0,5);
+  
+; ------------------------------------------------  
+;  HL = value
+;  D  = zero/empty Char (0,32,48)
+;  E  = length
+PRNUM$:
+
+  ld   A,#5		;number Digit
+  ex   AF,AF
+  
 ;for a future version with negative numbers  
 ;if (HL<0) Print "-" 
 ;   ld   A,#45
@@ -314,63 +324,94 @@ __asm
 
   	
   ld   BC,#-10000
-	call $Num1
-	ld   BC,#-1000
-	call $Num1
-	ld	 BC,#-100
-	call $Num1
-	ld	 C,#-10
-	call $Num1
-  ;Last figure
-	ld	 C,B
-  ld   A,#48          ;"0"
-  ld   (#_CSTATE),A
-	call $Num1
+  call $Num1
+  ld   BC,#-1000
+  call $Num1
+  ld   BC,#-100
+  call $Num1
+  ld   C,#-10
+  call $Num1
 
-;END
-  pop  IX
-  ret
+;Last figure
+  ld   C,B
+  ld   D,#48          ;"0"
+
+;  call $Num1
+;  ret   ; END
     
 $Num1:	
-  ld	 A,#47     ;"0" ASCII code - 1
+  ld   A,#47     ;"0" ASCII code - 1
    
 $Num2:
-  inc	 A
-	add	 HL,BC
-	jr	 C,$Num2
+  inc  A
+  add  HL,BC
+  jr   C,$Num2
 	
-	sbc	 HL,BC
+  sbc  HL,BC
 	
-	cp   #48       ;"0" ASCII code    
-	jr   NZ,$Num3  ;if A!=48 then goto $Num3
+  cp   #48       ;"0" ASCII code
+  jr   NZ,$Num3  ;if A!=48 then goto $Num3
 	
-	ld   A,(#_CSTATE)
+  ld   A,D  ;(DE)
   jr   $Num4
 
 
 $Num3:
-  ;change space for 0 zero ASCII code
-  ex   AF,AF
-  ld   A,#48
-  ld   (#_CSTATE),A
-  ex   AF,AF	
+  ;change space/empty for 0 zero ASCII code
+  ld   D,#48
 	
 $Num4:
-  ld   E,A
-;  ld   IY,#_FNUMSIZE
-  dec  (IY)
-  ld   A,(IY)
-  cp   D
-  ret  NC
-  
-  ld   A,E
+  ex   AF,AF
+  dec  A  ;number Digit
+  cp   E  ;length
+  jr  NC,$next5  ;IF num.Digit>length THEN dont print
+
+  ex   AF,AF
   or   A
   ret  Z  ;only print A>0
   
-  jp   CHPUT
-		
-;	ret
-    
+  jp   BIOS_CHPUT  ;Print digit
+
+$next5:
+  ex   AF,AF
+  ret
+  
+__endasm;
+}
+
+
+
+/* =============================================================================
+ PrintFNumber
+
+ Description: 
+			Displays an unsigned integer with formatting parameters, 
+			in the last position where the cursor is.
+		   
+ Input:		(unsigned int or char) numeric value
+			(char) zero/empty Char: (0 = "", 32=' ', 48='0', etc.)
+			(char) length: 1 to 5          
+ Output:   -
+============================================================================= */
+void PrintFNumber(unsigned int value, char emptyChar, char length)
+{
+  value;       //HL
+  emptyChar;
+  length;
+__asm
+  push IX
+  ld   IX,#0
+  add  IX,SP
+  
+  ;HL = value
+  
+  ld   D,4(IX)        ;emptyChar
+  ld   E,5(IX)        ;length
+   
+  call PRNUM$
+  
+  pop  IX
+		    
 __endasm;
 }
 
@@ -383,32 +424,76 @@ __endasm;
   Input:    (char) - char value          
   Output:   -
 ============================================================================= */
-void bchput(char value) __naked
+/*void bchput(char value) __naked
 {
 value;
 __asm
-  push IX
-  ld   IX,#0
-  add  IX,SP
-  
-  ld   A,4(IX)   
-  call CHPUT
-  
-  pop  IX
-  ret
+  jp   CHPUT
 __endasm;
-}
+}*/
 
 
 
 /* =============================================================================
    Current row-position of the cursor
 ============================================================================= */
-/*char getLine()
+/*char GetRow() __naked
 {
 __asm
-  ld   HL,#CSRY
-  ld   L,(HL)
+  ld   A,(#CSRY)
+  ret
+__endasm;
+} */
+
+
+
+/* =============================================================================
+Current column-position of the cursor
+============================================================================= */
+/*char GetColumn() __naked
+{
+__asm
+  ld   A,(#CSRX)
+  ret
+__endasm;
+} */
+
+
+
+/* =============================================================================
+   Displays the function keys
+============================================================================= */
+/*void KEYON() __naked
+{
+__asm
+  jp DSPFNK
 __endasm;
 }*/
 
+
+
+/* =============================================================================
+   Erase functionkey display
+============================================================================= */
+/*void KEYOFF() __naked
+{
+__asm
+  jp ERAFNK
+__endasm;
+}*/
+
+
+
+/* =============================================================================
+   Indicates whether Text 1 mode is active.
+   Output:	1=Yes/True ; 0=No/False
+============================================================================= */
+/*
+char isText1Mode(void)
+{
+	char *A;
+	A=(unsigned int *) RG1SAV;
+	if (*A&0b00010000) return 1; //Text 40col Mode
+	return 0;	
+}
+*/

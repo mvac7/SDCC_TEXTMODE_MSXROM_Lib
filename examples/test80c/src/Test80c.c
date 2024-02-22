@@ -1,18 +1,18 @@
 /* =============================================================================
-	Test TEXTMODE MSX ROM Library (fR3eL Project)
-	Version: 1.3 (25/11/2023)
+	Test 80 columns TEXTMODE MSX ROM Library (fR3eL Project)
+	Version: 1.4 (27/11/2023)
 	Author: mvac7/303bcn
 	Architecture: MSX
 	Format: ROM
 	Programming language: C and Assembler
-	Compiler: SDCC 4.3 or newer
+	Compiler: SDCC 4.3 or newer      
 	Description:
-		Test Textmode Library Text 1 (40 columns) and Graphic 1 (32 columns) modes.
+		Test Textmode Library to 80 columns screen mode.
+		For MSX computers with V9938 and BIOS that supports Text 2 mode.
 
 	History of versions:
-	- v1.3 (25/11/2023) update to SDCC (4.1.12) Z80 calling conventions
-	- v1.2 (6/04/2018)
-	- v1.1 (27/02/2017)
+	- v1.4 (27/11/2023) update to SDCC v4.3
+	- v1.3 (6/04/2018)
 ============================================================================= */
 
 #include "../include/newTypes.h"
@@ -35,8 +35,7 @@ char INKEY(void);
 
 void WAIT(uint cicles);
 
-void test_SC0(void);
-void test_SC1(void);
+void test_SC080(void);
 
 void testWIDTH(void);
 void testPRINT(void);
@@ -48,45 +47,41 @@ void PressAnyKey(void);
 
 
 // constants  ------------------------------------------------------------------
-const char text01[] = "Test Textmode Lib v1.4";
+const char text01[] = "Test80c Textmode Lib v1.4";
 
-const char text_32col[] = "----5----1----1----2----2----3--         0    5    0    5    0  ";
-const char text_40col[] = "----5----1----1----2----2----3----3----4         0    5    0    5    0    5    0";
+const char text_80col[] = "----5----1----1----2----2----3----3----4----4----5----5----6----6----7----7----8         0    5    0    5    0    5    0    5    0    5    0    5    0    5    0";
 
 const char text_LF[] = "\n"; // LF line Feed
 const char text_CR[] = "\r"; // CR Carriage Return
 
-const char testString[] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+const char testString[] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-const char presskey[] = "Press any key to continue";
+const char presskey[] = "Press a key to continue";
 // global variable definition --------------------------------------------------
 
 
 
 
-// ------------------------------------------------------------------- Functions
+// Functions -------------------------------------------------------------------
 
 
+//
 void main(void)
 {
 	COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
 	WIDTH(32);
 	SCREEN1();
 
-	LOCATE(3,11);
+	LOCATE(3,10);
 	PRINT(text01);
-	//LOCATE(7,11);
-	//PRINT(text02);
 
-	PressAnyKey(); 
+	INKEY();
 	  
-	test_SC0();
-
-	test_SC1();
+	test_SC080();
 
 	CLS();
 	PRINT("END");
-	PressAnyKey();  
+	WAIT(30*5);
 }
 
 
@@ -126,6 +121,7 @@ __endasm;
 
 
 
+
 // Generates a pause in the execution of n interruptions.
 // PAL: 50=1second. ; NTSC: 60=1second. 
 void WAIT(uint cicles)
@@ -136,22 +132,18 @@ void WAIT(uint cicles)
 
 
 
-
-// ############################################################### TEST functions
-
-void test_SC0(void)
+void test_SC080(void)
 {
-	COLOR(LIGHT_GREEN,DARK_GREEN,DARK_GREEN);
-	WIDTH(40);
+	COLOR(LIGHT_GREEN,DARK_GREEN,DARK_GREEN);      
+	WIDTH(80);
 	SCREEN0();
 
 	LOCATE(0,0);  
-	PrintLN(">Test SCREEN0()");
+	PRINT(">Test SCREEN0()\n");
 
 	testWIDTH();
 
 	testPRINT();
-
 	testPrintNumber();
 
 	testCLS();
@@ -160,31 +152,8 @@ void test_SC0(void)
 	else PRINT(">> OK");
 
 	PressAnyKey();
-}
 
-
-
-void test_SC1(void)
-{
-	COLOR(WHITE,LIGHT_BLUE,DARK_BLUE);
-	WIDTH(32);
-	SCREEN1();  
-
-	LOCATE(0,0);
-	PrintLN(">Test SCREEN1()");
-
-	testWIDTH();
-
-	testPRINT();
-
-	testPrintNumber();
-
-	testCLS();
-	LOCATE(0,17);
-	if (VPEEK(0x1800)==62) PRINT(">>> ERROR");  // ">"=62
-	else PRINT(">> OK");
-
-	PressAnyKey();
+	return;
 }
 
 
@@ -194,15 +163,11 @@ void testWIDTH(void)
 	char columns;
 
 	columns = PEEK(LINLEN);
-    
+
 	PRINT(">Test WIDTH(");
 	PrintNumber(columns);
 	PrintLN(")");
-
-	PRINT(text_LF);
-
-	if(columns<40) PrintLN(text_32col);  
-	else PrintLN(text_40col);
+	PrintLN(text_80col);
 }
 
 
@@ -238,6 +203,7 @@ void testPRINT(void)
 	PRINT("\f <-- Formfeed (CLS)");	// Formfeed (CLS)
 	PressAnyKey();
 }
+
 
 
 
@@ -303,3 +269,4 @@ void PressAnyKey(void)
 	PRINT(presskey);
 	INKEY();	
 }
+

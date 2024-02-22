@@ -1,15 +1,13 @@
 /* =============================================================================
-  SDCC MSX TEXTMODE Functions Library (object type)
-  Version: 1.3
-  Author: mvac7/303bcn
-  Architecture: MSX
-  Format: C Object (SDCC .rel)
-  Programming language: C + Assembler
-  WEB: 
-  mail: mvac7303b@gmail.com
+  MSX TEXTMODE Library (fR3eL Project)
 
   Description:
-    Open Source library of functions for creating aplications in text mode. 
+	 Library with functions to work in text mode in Screen 0 (40/80 columns), 
+	 and Screen 1. 
+
+	 It is designed to develop MSX applications using Small Device C Compiler 
+	 (SDCC), although it is an opensource project. Feel free to use part or 
+	 all of it to adapt it to other systems or development environments.
 
 ============================================================================= */
 #ifndef __TEXTMODE_H__
@@ -18,8 +16,8 @@
 
 
 // palette color codes
-#ifndef _COLORS
-#define _COLORS
+#ifndef _TMS_COLORS
+#define _TMS_COLORS
 #define TRANSPARENT   0
 #define BLACK         1
 #define GREEN         2
@@ -44,13 +42,17 @@
  SCREEN0
  
  Description: 
-           Switch to T1 or T2 mode (SCREEN 0), 40 or 80 columns x 24 lines.
-           Notice: To set the T2 mode, you must first set 80 columns with the 
-           WIDTH instruction.
+			Initialice TEXT 1 (40 columns) or TEXT 2 (80 columns) screen mode.
+		   
+			Note: 
+			To set the T2 mode, you must first set 80 columns with the WIDTH 
+			function (only MSX computers with V9938 and BIOS that supports 
+			this mode).
+		   
  Input:    -
  Output:   -
 ============================================================================= */
-void SCREEN0();
+void SCREEN0(void);
 
 
 
@@ -58,11 +60,11 @@ void SCREEN0();
  SCREEN1
  
  Description: 
-           Switch to G1 mode (SCREEN 1), 32 columns x 24 lines.
+           Initialice GRAPHIC 1 screen mode (32 columns x 24 lines).
  Input:    -
  Output:   -
 ============================================================================= */
-void SCREEN1();
+void SCREEN1(void);
 
 
 
@@ -71,10 +73,9 @@ void SCREEN1();
  
  Description: 
            Specifies the number of characters per line in text mode.
- Input:     1 to 40 in T1 40 columns mode
-           41 to 80 in T2 80 columns mode (only MSX with V9938 and a BIOS that 
-                                           supports this mode)
-            1 to 32 in G1 mode
+ Input:     1 to 40 in TEXT 1 mode (40 columns)
+           41 to 80 in TEXT 2 mode (80 columns)
+            1 to 32 in GRAPHIC 1 mode
  Output:   - 
 ============================================================================= */
 void WIDTH(char columns);
@@ -82,14 +83,15 @@ void WIDTH(char columns);
 
 
 /* =============================================================================
- COLOR
+  COLOR
  
- Description: 
-           Specifies the colors of the foreground, background, and border area.
- Input:    (char) ink (0 to 15)
-           (char) background (0 to 15)
-           (char) border (0 to 15)
- Output:   -
+  Description: 
+			Specifies the colors of the foreground, background, and border area.
+			Note: In TEST 1 mode the border color has no effect. 
+			
+  Input:    (char) ink (0 to 15)
+			(char) background (0 to 15)
+			(char) border (0 to 15)
 ============================================================================= */
 void COLOR(char ink, char background, char border);
 
@@ -99,12 +101,11 @@ void COLOR(char ink, char background, char border);
  CLS
  
  Description: 
-           Clear the contents of the screen.
-           Fill screen map with 0x20 character.
+           Clear Screen. Fill Pattern Name Table with 0x20 character.
  Input:    -        
  Output:   - 
 ============================================================================= */
-void CLS();
+void CLS(void);
 
 
 
@@ -113,7 +114,10 @@ void CLS();
  
  Description: 
            Moves the cursor to the specified location.
- Input:    (char) Position X of the cursor. (0 to 31 or 79)
+		   
+ Input:    (char) Position X of the cursor. TEXT 1 (0 to 39) 
+											TEXT 2 (0 to 79)
+											GRAPHIC 1 (0 to 31)
            (char) Position Y of the cursor. (0 to 23)         
  Output:   -
 ============================================================================= */
@@ -125,36 +129,52 @@ void LOCATE(char x, char y);
  PRINT
   
  Description: 
-           Displays a text string on the screen.             
+			Displays a text string in the last position where the cursor is.
+			Use the LOCATE function when you need to indicate a specific position.
                         
  Input:    (char*) String    
  Output:   -
+ 
  Notes:
             Supports escape sequences:
-             \a (0x07) - Beep
-             \b (0x08) - Backspace. Cursor left, wraps around to previous line, 
-                         stop at top left of screen.
-             \t (0x09) - Horizontal Tab. Tab, overwrites with spaces up to next 
-                         8th column, wraps around to start of next line, scrolls
-                         at bottom right of screen.
-             \n (0x0A) - Newline > Line Feed and Carriage Return (CRLF) 
-                         Note: CR added in this Lib.
-             \v (0x0B) - Cursor home. Place the cursor at the top of the screen.
-             \f (0x0C) - Formfeed. Clear screen and place the cursor at the top. 
-             \r (0x0D) - CR (Carriage Return)
+             \a (0x07)	- Beep
+             \b (0x08)	- Backspace. Cursor left, wraps around to previous line, 
+                          stop at top left of screen.
+             \t (0x09)	- Horizontal Tab. Tab, overwrites with spaces up to next 
+                          8th column, wraps around to start of next line, scrolls
+                          at bottom right of screen.
+             \n (0x0A)	- Newline > Line Feed and Carriage Return (CRLF) 
+                          Note: CR added in this Library.
+             \v (0x0B)	- Cursor home. Place the cursor at the top of the screen.
+						  Warning: This does not correspond to Vertical Tab, 
+						  standardized in C.
+             \f (0x0C)	- Formfeed. Clear screen and place the cursor at the top. 
+             \r (0x0D)	- CR (Carriage Return)
             
-             \" (0x22) - Double quotation mark
-             \' (0x27) - Single quotation mark
-             \? (0x3F) - Question mark
-             \\ (0x5C) - Backslash
-             \xhh      - Print in the output the character/code given in the 
+             \" (0x22)	- Double quotation mark
+             \' (0x27)	- Single quotation mark
+             \? (0x3F)	- Question mark
+			 \\ (0x5C)	- Backslash
+			 
+			 \xhh		- Print in the output the character/code given in the 
                          hexadecimal value (hh).
+						 
+			 \1\xHH		- Print Extended Graphic Characters. HH = character + 0x40
 ============================================================================= */
 void PRINT(char* text);
 
 
-
-//void printf(char* text);
+/* =============================================================================
+ PrintLN
+  
+ Description: 
+           Displays a text string in the last position where the cursor is 
+		   and adds a new line (CRLF).   
+                        
+ Input:    (char*) String    
+ Output:   -
+============================================================================= */
+void PrintLN(char* text);
 
 
 
@@ -162,7 +182,11 @@ void PRINT(char* text);
  PrintNumber
 
  Description: 
-           Prints an unsigned integer on the screen.  
+            Displays an unsigned integer in the last position where the cursor is.
+
+			16-bit Integer to ASCII (decimal) based on num2Dec16 by baze
+			https://baze.sk/3sc/misc/z80bits.html#5.1
+			
  Input:    (unsigned int) numeric value          
  Output:   -
 ============================================================================= */
@@ -175,14 +199,12 @@ void PrintNumber(unsigned int value);
  PrintFNumber
 
  Description: 
-           Prints an unsigned integer on the screen with formatting parameters.
-           
-           16-bit Integer to ASCII (decimal)
-           Based on num2Dec16 by baze
-           
- Input:    (unsigned int) numeric value
-           (char) empty Char: (32=' ', 48='0', etc.)
-           (char) length: 1 to 5          
+			Displays an unsigned integer with formatting parameters, 
+			in the last position where the cursor is.
+		   
+ Input:		(unsigned int or char) numeric value
+			(char) zero/empty Char: (0 = "", 32=' ', 48='0', etc.)
+			(char) length: 1 to 5          
  Output:   -
 ============================================================================= */
 void PrintFNumber(unsigned int value, char emptyChar, char length);
@@ -198,36 +220,43 @@ void PrintFNumber(unsigned int value, char emptyChar, char length);
  Input:   (char) text char
  Output:  -
 ============================================================================= */
-void bchput(char value);
+//void bchput(char value);
 
 
 
 /* =============================================================================
    Current row-position of the cursor
 ============================================================================= */
-//char GetRow()
+//char GetRow(void)
 
 
 
 /* =============================================================================
 Current column-position of the cursor
 ============================================================================= */
-//char GetColumn()
+//char GetColumn(void)
 
 
 
 /* =============================================================================
    Displays the function keys
 ============================================================================= */
-//void KEYON()
+//void KEYON(void)
 
 
 
 /* =============================================================================
    Erase functionkey display
 ============================================================================= */
-//void KEYOFF()
+//void KEYOFF(void)
 
+
+
+/* =============================================================================
+   Indicates whether Text 1 mode is active.
+   Output:	1=Yes/True ; 0=No/False
+============================================================================= */
+//char isText1Mode(void)
 
 
 #endif
