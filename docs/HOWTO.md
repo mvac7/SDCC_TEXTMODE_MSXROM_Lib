@@ -2,9 +2,7 @@
 
 | Attention! |
 | :---       |
-| The following document has been written using an English translator.<br/>
-You can participate in the improvement of this document, transmitting your corrections or suggestions in the issues of this project or the main fR3eL.<br/>
-Thanks for understanding! |
+| The following document has been written using an English translator.<br/>You can participate in the improvement of this document, transmitting your corrections or suggestions in the issues of this project or the main fR3eL.<br/>Thanks for understanding! |
 
 <br/>
 
@@ -115,7 +113,7 @@ WHITE		| 15
 
 <table>
 <tr><th colspan=3 align="left">COLOR</th></tr>
-<tr><td colspan=3>Specifies the colors of the foreground, background, and border area.<br/>Note: In TEST 1 mode the border color has no effect.</td></tr>
+<tr><td colspan=3>Specifies the colors of the foreground, background, and border area.<br/><b>Note:</b> In TEST 1 mode the border color has no effect.</td></tr>
 <tr><th>Function</th><td colspan=2>COLOR(ink, background, border)</td></tr>
 <tr><th rowspan=3>Input</th><td>[char]</td><td>Ink color (0 to 15)</td></tr>
 <tr><td>[char]</td><td>Background color (0 to 15)</td></tr>
@@ -130,8 +128,7 @@ WHITE		| 15
 
 <table>
 <tr><th colspan=3 align="left">SCREEN0</th></tr>
-<tr><td colspan=3>Initialice TEXT 1 (40 columns) or TEXT 2 (80 columns) screen mode.<br/>
-**Note:** To set the TEXT 2 mode, you must first set 80 columns with the WIDTH function (only MSX computers with V9938 and BIOS that supports this mode).</td></tr>
+<tr><td colspan=3>Initialice TEXT 1 (40 columns) or TEXT 2 (80 columns) screen mode.<br/><b>Note:</b> To set the TEXT 2 mode, you must first set 80 columns with the WIDTH function (only MSX computers with V9938 and BIOS that supports this mode).</td></tr>
 <tr><th>Function</th><td colspan=2>SCREEN0()</td></tr>
 <tr><th>Input</th><td colspan=2> --- </td></tr>
 <tr><th>Output</th><td colspan=2> --- </td></tr>
@@ -169,13 +166,13 @@ WHITE		| 15
 ### 4.6 LOCATE
 
 <table>
-<tr><th colspan=3 align="left">LOCATE</th></tr>
+<tr><td colspan=3><b>LOCATE</b></td></tr>
 <tr><td colspan=3>Moves the cursor to the specified location.</td></tr>
-<tr><th>Function</th><td colspan=2>LOCATE(column,line)</td></tr>
-<tr><th rowspan=2>Input</th><td>[char]</td><td>Position X of the cursor.<br/>TEXT 1 (0 to 39)<br/>TEXT 2 (0 to 79)<br/>GRAPHIC 1 (0 to 31)</td></tr>
+<tr><td><b>Function</b></td><td colspan=2>LOCATE(column,line)</td></tr>
+<tr><td rowspan=2><b>Input</b></td><td>[char]</td><td>Position X of the cursor.<br/>TEXT 1 (0 to 39)<br/>TEXT 2 (0 to 79)<br/>GRAPHIC 1 (0 to 31)</td></tr>
 <tr><td>[char]</td><td>Position Y of the cursor. (0 to 23) </td></tr>
-<tr><th>Output</th><td colspan=2> --- </td></tr>
-<tr><th>Example:</th><td colspan=2><pre>LOCATE(8,12);<br/>PRINT("Hello World!");</pre></td></tr>
+<tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>LOCATE(8,12);<br/>PRINT("Hello World!");</pre></td></tr>
 </table>
 
 <br/>
@@ -245,8 +242,7 @@ Read [Appendix 1](#61-Supports-escape-sequences) for supported C escape secuence
 
 | Note: |
 | :---  |
-| By empty character, when processing a string, we refer to the first characters to be printed that do not correspond to a numerical figure.<br/>
-For example: When printing a string of five characters, the number "123", if we indicate that the empty character is "0", the screen will display "00123". |
+| By empty character, when processing a string, we refer to the first characters to be printed that do not correspond to a numerical figure.<br/><b>For example:</b> When printing a string of five characters, the number `123`, if we indicate that the empty character is `0`, the screen will display `00123`. |
 
 
 <br/>
@@ -302,17 +298,17 @@ void main(void)
 
 | Esc  | value  | Description |
 | :--- | :---   | :---        |
-| \a   | (0x07) | Beep |
-| \b   | (0x08) | Backspace. Cursor left, wraps around to previous line, stop at top left of screen. |
-| \t   | (0x09) | Horizontal Tab. Tab, overwrites with spaces up to next 8th column, wraps around to start of next line, scrolls at bottom right of screen. |
-| \n   | (0x0A) | Newline > Line Feed and Carriage Return (CRLF)<br/>Note: CR added in this Lib. |
-| \v   | (0x0B) | Cursor home. Place the cursor at the top of the screen.<br/>**Note:** This does not correspond to Vertical Tab, standardized in C. |
-| \f   | (0x0C) | Formfeed. Clear screen and place the cursor at the top. |
-| \r   | (0x0D) | CR (Carriage Return) |
-| \"   | (0x22) | Double quotation mark |
-| \'   | (0x27) | Single quotation mark |
-| \?   | (0x3F) | Question mark |
-| \\   | (0x5C) | Backslash |
+| \a   | 0x07 | Beep |
+| \b   | 0x08 | Backspace. Cursor left, wraps around to previous line, stop at top left of screen. |
+| \t   | 0x09 | Horizontal Tab. Tab, overwrites with spaces up to next 8th column, wraps around to start of next line, scrolls at bottom right of screen. |
+| \n   | 0x0A | Newline > Line Feed and Carriage Return (CRLF)<br/>Note: CR added in this Lib. |
+| \v   | 0x0B | Cursor home. Place the cursor at the top of the screen.<br/>**Note:** This does not correspond to Vertical Tab, standardized in C. |
+| \f   | 0x0C | Formfeed. Clear screen and place the cursor at the top. |
+| \r   | 0x0D | CR (Carriage Return) |
+| \"   | 0x22 | Double quotation mark |
+| \'   | 0x27 | Single quotation mark |
+| \?   | 0x3F | Question mark |
+| \\   | 0x5C | Backslash |
  
 <br/>
 
@@ -346,7 +342,7 @@ It must be taken into account that the character code is equivalent to the corre
   PrintLN("\1\x5A\1\x57\1\x57\1\x5B");
 ```
 
-![Extended Graphic Characters Table](extended_graphic_characters.png)
+![Extended Graphic Characters Table](extended_graphic_characters.png)<br/>
 _Extended Graphic Characters Table (By [MSX Resource Center](https://www.msx.org/wiki/MSX_Characters_and_Control_Codes#International_codes))_
 
 
