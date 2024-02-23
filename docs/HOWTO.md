@@ -316,17 +316,17 @@ You will find this example and others in the sources of this project [`examples/
 
 | Esc  | value | Description |
 | :--- | :---  | :---        |
-| \a   | 0x07  | Beep |
-| \b   | 0x08  | Backspace. Cursor left, wraps around to previous line, stop at top left of screen. |
-| \t   | 0x09  | Horizontal Tab. Tab, overwrites with spaces up to next 8th column, wraps around to start of next line, scrolls at bottom right of screen. |
-| \n   | 0x0A  | Newline > Line Feed and Carriage Return (CRLF)<br/>Note: CR added in this Lib. |
-| \v   | 0x0B  | Cursor home. Place the cursor at the top of the screen.<br/>**Note:** This does not correspond to Vertical Tab, standardized in C. |
-| \f   | 0x0C  | Formfeed. Clear screen and place the cursor at the top. |
-| \r   | 0x0D  | CR (Carriage Return) |
-| \"   | 0x22  | Double quotation mark |
-| \'   | 0x27  | Single quotation mark |
-| \?   | 0x3F  | Question mark |
-| \\   | 0x5C  | Backslash |
+| `\a` | 0x07  | Beep |
+| `\b` | 0x08  | Backspace. Cursor left, wraps around to previous line, stop at top left of screen. |
+| `\t` | 0x09  | Horizontal Tab. Tab, overwrites with spaces up to next 8th column, wraps around to start of next line, scrolls at bottom right of screen. |
+| `\n` | 0x0A  | Newline > Line Feed and Carriage Return (CRLF)<br/>Note: CR added in this Lib. |
+| `\v` | 0x0B  | Cursor home. Place the cursor at the top of the screen.<br/>**Note:** This does not correspond to Vertical Tab, standardized in C. |
+| `\f` | 0x0C  | Formfeed. Clear screen and place the cursor at the top. |
+| `\r` | 0x0D  | CR (Carriage Return) |
+| `\"` | 0x22  | Double quotation mark |
+| `\'` | 0x27  | Single quotation mark |
+| `\?` | 0x3F  | Question mark |
+| `\\` | 0x5C  | Backslash |
  
 <br/>
 
