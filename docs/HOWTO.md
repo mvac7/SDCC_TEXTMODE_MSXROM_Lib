@@ -2,7 +2,7 @@
 
 | Attention! |
 | :---       |
-| The following document has been written using an English translator.<br/>You can participate in the improvement of this document, transmitting your corrections or suggestions in the issues of this project or the main fR3eL.<br/>Thanks for understanding. |
+| The following document has been written using an English translator.<br/>You can participate in the improvement of this document, transmitting your corrections or suggestions in the issues of this project or the main fR3eL project.<br/>Thanks for understanding. |
 
 <br/>
 
@@ -113,7 +113,7 @@ WHITE		| 15
 
 <table>
 <tr><td colspan=3><b>COLOR</b></td></tr>
-<tr><td colspan=3>Specifies the colors of the foreground, background, and border area.<br/><b>Note:</b> In TEST 1 mode the border color has no effect.</td></tr>
+<tr><td colspan=3>Specifies the colors of the foreground, background, and border area.<br/><b>Note:</b> In TEXT 1 mode the border color has no effect.</td></tr>
 <tr><td><b>Function</b></td><td colspan=2>COLOR(ink, background, border)</td></tr>
 <tr><td rowspan=3><b>Input</b></td><td>[char]</td><td>Ink color (0 to 15)</td></tr>
 <tr><td>[char]</td><td>Background color (0 to 15)</td></tr>
@@ -145,7 +145,7 @@ WHITE		| 15
 <tr><td><b>Function</b></td><td colspan=2>SCREEN1()</td></tr>
 <tr><td><b>Input</b></td><td colspan=2> --- </td></tr>
 <tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
-<tr><td><b>Example:</b></td><td colspan=2><pre>COLOR(14,4,5);<br/>SCREEN1();</pre></td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>COLOR(14,4,5);<br/>WIDTH(32);<br/>SCREEN1();</pre></td></tr>
 </table>
 
 <br/>
@@ -185,7 +185,7 @@ WHITE		| 15
 <tr><td><b>Function</b></td><td colspan=2>PRINT(text)</td></tr>
 <tr><td><b>Input</b></td><td>[char*]</td><td>String</td></tr>
 <tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
-<tr><td><b>Example:</b></td><td colspan=2><pre>LOCATE(0,8);PRINT("\tLine 1\n\tLine 2\n\tLine 3\n");</pre></td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>LOCATE(0,8);<br/>PRINT("\tLine 1\n\tLine 2\n\tLine 3\n");</pre></td></tr>
 </table>
 
 Read [Appendix 1](#61-Supports-escape-sequences) for supported C escape secuences.
@@ -241,7 +241,7 @@ Read [Appendix 1](#61-Supports-escape-sequences) for supported C escape secuence
 
 | Note: |
 | :---  |
-| By empty character, when processing a string, we refer to the first characters to be printed that do not correspond to a numerical figure.<br/><b>For example:</b> When printing a string of five characters, the number `123`, if we indicate that the empty character is `0`, the screen will display `00123`. |
+| The empty character parameter is used to indicate that the first characters that do not correspond to a numerical figure must be printed.<br/><b>Example:</b> If we want a 5 character output for the number `123`, if we indicate that the empty character is `0`, the display will show `00123`. |
 
 
 <br/>
@@ -250,17 +250,22 @@ Read [Appendix 1](#61-Supports-escape-sequences) for supported C escape secuence
 
 ## 5 Code Examples
 
+### Source
 ```c
+/* =====================================================
+	Example TEXTMODE MSX ROM Library (fR3eL Project)
+======================================================== */
+
 #include "../include/textmode_MSX.h"
 
 const char text01[] = "Example textmode Lib";
 
 void main(void)
 {
-  unsigned int uintvalue=1234;
+  unsigned int uintValue=1234;
   char charValue=71;
   
-  COLOR(LIGHT_GREEN,DARK_GREEN,DARK_GREEN);
+  COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
   WIDTH(40);
   SCREEN0();
   
@@ -278,12 +283,26 @@ void main(void)
   PrintFNumber(charValue,'0',4); //"0071"
   
   PRINT("\n>Print Integer:");
-  PrintFNumber(uintvalue,32,5); //" 1234"
+  PrintFNumber(uintValue,32,5); //" 1234"
+  
+  PRINT("\n>Print cut number:");
+  PrintFNumber(uintValue,32,2); //"34"
   
   LOCATE(8,11);
   PRINT(text01);
+  
+__asm   
+  call  0x009F ;BIOS CHGET One character input (waiting)
+__endasm;
 }
 ```
+
+### Output
+![Example screenshot](Example_screenshot.png)
+
+<br/>
+
+You will find this example and others in the sources of this project [`examples/`](../examples/).
 
 <br/>
 
@@ -295,19 +314,19 @@ void main(void)
 
 #### Table of escape sequences
 
-| Esc  | value  | Description |
-| :--- | :---   | :---        |
-| \a   | 0x07 | Beep |
-| \b   | 0x08 | Backspace. Cursor left, wraps around to previous line, stop at top left of screen. |
-| \t   | 0x09 | Horizontal Tab. Tab, overwrites with spaces up to next 8th column, wraps around to start of next line, scrolls at bottom right of screen. |
-| \n   | 0x0A | Newline > Line Feed and Carriage Return (CRLF)<br/>Note: CR added in this Lib. |
-| \v   | 0x0B | Cursor home. Place the cursor at the top of the screen.<br/>**Note:** This does not correspond to Vertical Tab, standardized in C. |
-| \f   | 0x0C | Formfeed. Clear screen and place the cursor at the top. |
-| \r   | 0x0D | CR (Carriage Return) |
-| \"   | 0x22 | Double quotation mark |
-| \'   | 0x27 | Single quotation mark |
-| \?   | 0x3F | Question mark |
-| \\   | 0x5C | Backslash |
+| Esc  | value | Description |
+| :--- | :---  | :---        |
+| \a   | 0x07  | Beep |
+| \b   | 0x08  | Backspace. Cursor left, wraps around to previous line, stop at top left of screen. |
+| \t   | 0x09  | Horizontal Tab. Tab, overwrites with spaces up to next 8th column, wraps around to start of next line, scrolls at bottom right of screen. |
+| \n   | 0x0A  | Newline > Line Feed and Carriage Return (CRLF)<br/>Note: CR added in this Lib. |
+| \v   | 0x0B  | Cursor home. Place the cursor at the top of the screen.<br/>**Note:** This does not correspond to Vertical Tab, standardized in C. |
+| \f   | 0x0C  | Formfeed. Clear screen and place the cursor at the top. |
+| \r   | 0x0D  | CR (Carriage Return) |
+| \"   | 0x22  | Double quotation mark |
+| \'   | 0x27  | Single quotation mark |
+| \?   | 0x3F  | Question mark |
+| \\   | 0x5C  | Backslash |
  
 <br/>
 
