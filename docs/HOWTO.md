@@ -2,7 +2,7 @@
 
 | Attention! |
 | :---       |
-| The following document has been written using an English translator.<br/>You can participate in the improvement of this document, transmitting your corrections or suggestions in the issues of this project or the main fR3eL.<br/>Thanks for understanding! |
+| The following document has been written using an English translator.<br/>You can participate in the improvement of this document, transmitting your corrections or suggestions in the issues of this project or the main fR3eL.<br/>Thanks for understanding. |
 
 <br/>
 
@@ -97,14 +97,14 @@ WHITE		| 15
 ### 4.1 WIDTH
 
 <table>
-<tr><th colspan=3 align="left">WIDTH</th></tr>
+<tr><td colspan=3><b>WIDTH</b></td></tr>
 <tr><td colspan=3>Specifies the number of characters per line in text mode.</td></tr>
-<tr><th>Function</th><td colspan=2>WIDTH(columns)</td></tr>
-<tr><th rowspan=3>Input</th><td rowspan=3>[char]</td><td>1 to 40 in TEXT 1 mode (40 columns)</td></tr>
+<tr><td><b>Function</b></td><td colspan=2>WIDTH(columns)</td></tr>
+<tr><td rowspan=3>Input</td><td rowspan=3>[char]</td><td>1 to 40 in TEXT 1 mode (40 columns)</td></tr>
 <tr><td>41 to 80 in TEXT 2 mode (80 columns)</td></tr>
 <tr><td>1 to 32 in GRAPHIC 1 mode</td></tr>
-<tr><th>Output</th><td colspan=2> --- </td></tr>
-<tr><th>Example:</th><td colspan=2><pre>WIDTH(24);<br/>SCREEN1();</pre></td></tr>
+<tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>WIDTH(24);<br/>SCREEN1();</pre></td></tr>
 </table>
 
 <br/>
@@ -112,14 +112,14 @@ WHITE		| 15
 ### 4.2 COLOR
 
 <table>
-<tr><th colspan=3 align="left">COLOR</th></tr>
+<tr><td colspan=3><b>COLOR</b></td></tr>
 <tr><td colspan=3>Specifies the colors of the foreground, background, and border area.<br/><b>Note:</b> In TEST 1 mode the border color has no effect.</td></tr>
-<tr><th>Function</th><td colspan=2>COLOR(ink, background, border)</td></tr>
-<tr><th rowspan=3>Input</th><td>[char]</td><td>Ink color (0 to 15)</td></tr>
+<tr><td><b>Function</b></td><td colspan=2>COLOR(ink, background, border)</td></tr>
+<tr><td rowspan=3><b>Input</b></td><td>[char]</td><td>Ink color (0 to 15)</td></tr>
 <tr><td>[char]</td><td>Background color (0 to 15)</td></tr>
 <tr><td>[char]</td><td>Border color (0 to 15)</td></tr>
-<tr><th>Output</th><td colspan=2> --- </td></tr>
-<tr><th>Example:</th><td colspan=2><pre>COLOR(BLACK,GRAY,DARK_BLUE);</pre></td></tr>
+<tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>COLOR(BLACK,GRAY,DARK_BLUE);</pre></td></tr>
 </table>
 
 <br/>
@@ -127,12 +127,12 @@ WHITE		| 15
 ### 4.3 SCREEN0
 
 <table>
-<tr><th colspan=3 align="left">SCREEN0</th></tr>
+<tr><td colspan=3><b>SCREEN0</b></td></tr>
 <tr><td colspan=3>Initialice TEXT 1 (40 columns) or TEXT 2 (80 columns) screen mode.<br/><b>Note:</b> To set the TEXT 2 mode, you must first set 80 columns with the WIDTH function (only MSX computers with V9938 and BIOS that supports this mode).</td></tr>
-<tr><th>Function</th><td colspan=2>SCREEN0()</td></tr>
-<tr><th>Input</th><td colspan=2> --- </td></tr>
-<tr><th>Output</th><td colspan=2> --- </td></tr>
-<tr><th>Example:</th><td colspan=2><pre>WIDTH(40);<br/>SCREEN0();</pre></td></tr>
+<tr><td><b>Function</b></td><td colspan=2>SCREEN0()</td></tr>
+<tr><td><b>Input</b></td><td colspan=2> --- </td></tr>
+<tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>WIDTH(40);<br/>SCREEN0();</pre></td></tr>
 </table>
 
 <br/>
@@ -140,12 +140,12 @@ WHITE		| 15
 ### 4.4 SCREEN1
 
 <table>
-<tr><th colspan=3 align="left">SCREEN1</th></tr>
+<tr><td colspan=3><b>SCREEN1</b></td></tr>
 <tr><td colspan=3>Initialice GRAPHIC 1 screen mode (32 columns x 24 lines).</td></tr>
-<tr><th>Function</th><td colspan=2>SCREEN1()</td></tr>
-<tr><th>Input</th><td colspan=2> --- </td></tr>
-<tr><th>Output</th><td colspan=2> --- </td></tr>
-<tr><th>Example:</th><td colspan=2><pre>COLOR(14,4,5);<br/>SCREEN1();</pre></td></tr>
+<tr><td><b>Function</b></td><td colspan=2>SCREEN1()</td></tr>
+<tr><td><b>Input</b></td><td colspan=2> --- </td></tr>
+<tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>COLOR(14,4,5);<br/>SCREEN1();</pre></td></tr>
 </table>
 
 <br/>
@@ -153,12 +153,12 @@ WHITE		| 15
 ### 4.5 CLS
 
 <table>
-<tr><th colspan=3 align="left">SCREEN0</th></tr>
+<tr><td colspan=3><b>SCREEN0</b></td></tr>
 <tr><td colspan=3>Clear Screen.<br/>Fill Pattern Name Table with 0x20 character.</td></tr>
-<tr><th>Function</th><td colspan=2>CLS()</td></tr>
-<tr><th>Input</th><td colspan=2> --- </td></tr>
-<tr><th>Output</th><td colspan=2> --- </td></tr>
-<tr><th>Example:</th><td colspan=2><pre>CLS();</pre></td></tr>
+<tr><td><b>Function</b></td><td colspan=2>CLS()</td></tr>
+<tr><td><b>Input</b></td><td colspan=2> --- </td></tr>
+<tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>CLS();</pre></td></tr>
 </table>
 
 <br/>
@@ -180,14 +180,13 @@ WHITE		| 15
 ### 4.7 PRINT
 
 <table>
-<tr><th colspan=3 align="left">PRINT</th></tr>
+<tr><td colspan=3><b>PRINT</b></td></tr>
 <tr><td colspan=3>Displays a text string in the last position where the cursor is.<br/>Use the LOCATE function to indicate a specific position.</td></tr>
-<tr><th>Function</th><td colspan=2>PRINT(text)</td></tr>
-<tr><th>Input</th><td>[char*]</td><td>String<br/>(See escape codes table)</td></tr>
-<tr><th>Output</th><td colspan=2> --- </td></tr>
-<tr><th>Example:</th><td colspan=2><pre>LOCATE(0,8);PRINT("\tLine 1\n\tLine 2\n\tLine 3\n");</pre></td></tr>
+<tr><td><b>Function</b></td><td colspan=2>PRINT(text)</td></tr>
+<tr><td><b>Input</b></td><td>[char*]</td><td>String</td></tr>
+<tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>LOCATE(0,8);PRINT("\tLine 1\n\tLine 2\n\tLine 3\n");</pre></td></tr>
 </table>
-
 
 Read [Appendix 1](#61-Supports-escape-sequences) for supported C escape secuences.
 
@@ -196,12 +195,12 @@ Read [Appendix 1](#61-Supports-escape-sequences) for supported C escape secuence
 ### 4.8 PrintLN
 
 <table>
-<tr><th colspan=3 align="left">PrintLN</th></tr>
+<tr><td colspan=3><b>PrintLN</b></td></tr>
 <tr><td colspan=3>Displays a text string in the last position where the cursor is and adds a new line.</td></tr>
-<tr><th>Function</th><td colspan=2>PrintLN(text)</td></tr>
-<tr><th>Input</th><td>[char*]</td><td>String<br/>(See escape codes table)</td></tr>
-<tr><th>Output</th><td colspan=2> --- </td></tr>
-<tr><th>Example:</th><td colspan=2><pre>PrintLN("Put your hands up in the air");</pre></td></tr>
+<tr><td><b>Function</b></td><td colspan=2>PrintLN(text)</td></tr>
+<tr><td><b>Input</b></td><td>[char*]</td><td>String<br/>(See escape codes table)</td></tr>
+<tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>PrintLN("Put your hands up in the air");</pre></td></tr>
 </table>
 
 <br/>
@@ -209,12 +208,12 @@ Read [Appendix 1](#61-Supports-escape-sequences) for supported C escape secuence
 ### 4.9 PrintNumber
 
 <table>
-<tr><th colspan=3 align="left">PrintNumber</th></tr>
+<tr><td colspan=3><b>PrintNumber</b></td></tr>
 <tr><td colspan=3>Displays an unsigned integer in the last position where the cursor is.</td></tr>
-<tr><th>Function</th><td colspan=2>PrintNumber(number)</td></tr>
-<tr><th>Input</th><td>[unsigned int] or [char]</td><td>numeric value</td></tr>
-<tr><th>Output</th><td colspan=2> --- </td></tr>
-<tr><th rowspan=2>Example:</th><td colspan=2><pre>PrintNumber(1234);</pre></td></tr>
+<tr><td><b>Function</b></td><td colspan=2>PrintNumber(number)</td></tr>
+<tr><td><b>Input</b></td><td>[unsigned int] or [char]</td><td>numeric value</td></tr>
+<tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
+<tr><td rowspan=2><b>Example:</b></td><td colspan=2><pre>PrintNumber(1234);</pre></td></tr>
 <tr><td colspan=2><pre>1234</pre></td></tr>
 </table>
 
@@ -227,14 +226,14 @@ Read [Appendix 1](#61-Supports-escape-sequences) for supported C escape secuence
 ### 4.10 PrintFNumber
 
 <table>
-<tr><th colspan=3 align="left">PrintFNumber</th></tr>
+<tr><td colspan=3><b>PrintFNumber</b></td></tr>
 <tr><td colspan=3>Displays an unsigned integer with formatting parameters, in the last position where the cursor is.</td></tr>
-<tr><th>Function</th><td colspan=2>PrintFNumber(number, emptyChar, length)</td></tr>
-<tr><th rowspan=3>Input</th><td>[unsigned int] or [char]</td><td>numeric value</td></tr>
+<tr><td><b>Function</b></td><td colspan=2>PrintFNumber(number, emptyChar, length)</td></tr>
+<tr><td rowspan=3>Input</td><td>[unsigned int] or [char]</td><td>numeric value</td></tr>
 <tr><td>[char]</td><td>Empty character value: (0 = nothing, 32=' ', 48='0')</td></tr>
 <tr><td>[char]</td><td>Length (1 to 5)</td></tr>
-<tr><th>Output</th><td colspan=2> --- </td></tr>
-<tr><th rowspan=2>Example:</th><td colspan=2><pre>unsigned int value=303;<br/>PrintFNumber(value,48,5);</pre></td></tr>
+<tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
+<tr><td rowspan=2><b>Example:</b></td><td colspan=2><pre>unsigned int value=303;<br/>PrintFNumber(value,48,5);</pre></td></tr>
 <tr><td colspan=2><pre>00303</pre></td></tr>
 </table>
 
