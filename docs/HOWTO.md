@@ -27,7 +27,7 @@
 	- [4.12 GetColumns](#412-GetColumns)
 	- [4.13 GetCursorRow](#413-GetCursorRow)
 	- [4.14 GetCursorColumn](#414-GetCursorColumn)
-- [5 How does it work?](#5-How-does-it-work?)
+- [5 How does it work?](#5-How-does-it-work)
 	- [5.1 TEXT 1 and TEXT 2 modes](#51-TEXT-1-and-TEXT-2-modes)
 	- [5.2 GRAPHIC 1 mode](#52-GRAPHIC-1-mode)
 	- [5.2.1 Set GRAPHIC 1 Colors](#521-Set-GRAPHIC-1-Colors)
@@ -333,7 +333,7 @@ Please note that when you initialize the screen with `SCREEN0` or `SCREEN1`, or 
 
 An example of a use case would be to start the TEXT 2 screen mode (Screen 0 in 80 columns), to develop an application for MSX 2 or higher.
 
-To do this we must use `SCREEN0()`, but this function does not know if we want TEXT 1 mode (up to 40 columns) or TEXT 2 (40 to 80). 
+To do this we must use `SCREEN0()`, but this function does not know if we want TEXT 1 mode (up to 40 columns) or TEXT 2 (41 to 80). 
 The way to differentiate between the two modes is to first indicate the number of columns in which we want to work with the `WIDTH()` function. 
 When it is greater than 40, the TEXT 2 mode will be activated.
 
@@ -352,7 +352,8 @@ In Screen 0, we can change the colors at any time since this mode only uses two 
 
 ### 5.2 GRAPHIC 1 mode
 
-Another use case would be to use GRAPHIC 1 mode with 32 columns. 
+Another use case would be to use GRAPHIC 1 mode with 32 columns.
+ 
 It is also recommended to assign the total columns and colors before initializing the screen mode. 
 In this case, the initialization function fills the VRAM color table with the values that we have given with the `COLOR` function. 
 For this reason, changing the colors after initialization will not generate any effect, except for the border color.
@@ -438,6 +439,8 @@ In the source code [`examples/`](../examples/), you can find applications for te
 
 ### 6.1 Example 1 (/doc_example)
 
+[`examples/doc_example`](../examples/doc_example)
+
 #### Source
 ```c
 /* =====================================================
@@ -485,17 +488,22 @@ __endasm;
 ```
 
 #### Output
+
 ![Example screenshot](doc_example_screenshot.png)
 
 <br/>
 
 ### 6.2 Example 2 (/test)
 
+[`examples/test`](../examples/test)
+
 ![Example screenshot](test_screenshot.png)
 
 <br/>
 
 ### 6.3 Example 3 (/test80c)
+
+[`examples/test80c`](../examples/test80c)
 
 ![Example screenshot](test80c_screenshot.png)
 
