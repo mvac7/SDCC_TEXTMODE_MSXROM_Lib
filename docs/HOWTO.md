@@ -23,10 +23,19 @@
 	- [4.8 PrintLN](#48-PrintLN)
 	- [4.9 PrintNumber](#49-PrintNumber)
 	- [4.10 PrintFNumber](#410-PrintFNumber)
-- [5 Code Examples](#5-Code-Examples)
-- [6 Appendices](#6-Appendices)
-    - [6.1 Supports escape sequences](#61-Supports-escape-sequences)
-- [7 References](#7-References)
+	- [4.11 bchput](#411-bchput)
+	- [4.12 GetColumns](#412-GetColumns)
+	- [4.13 GetCursorRow](#413-GetCursorRow)
+	- [4.14 GetCursorColumn](#414-GetCursorColumn)
+- [5 How does it work?](#5-How-does-it-work?)
+	- [5.1 TEXT 1 and TEXT 2 modes](#51-TEXT-1-and-TEXT-2-modes)
+	- [5.2 GRAPHIC 1 mode](#52-GRAPHIC-1-mode)
+	- [5.2.1 Set GRAPHIC 1 Colors](#521-Set-GRAPHIC-1-Colors)
+	- [5.3 More things](#53-More-things)
+- [6 Code Examples](#6-Code-Examples)
+- [7 Appendices](#6-Appendices)
+    - [7.1 Supports escape sequences](#71-Supports-escape-sequences)
+- [8 References](#8-References)
 
 
 <br/>
@@ -153,7 +162,7 @@ WHITE		| 15
 ### 4.5 CLS
 
 <table>
-<tr><td colspan=3><b>SCREEN0</b></td></tr>
+<tr><td colspan=3><b>CLS</b></td></tr>
 <tr><td colspan=3>Clear Screen.<br/>Fill Pattern Name Table with 0x20 character.</td></tr>
 <tr><td><b>Function</b></td><td colspan=2>CLS()</td></tr>
 <tr><td><b>Input</b></td><td colspan=2> --- </td></tr>
@@ -174,6 +183,10 @@ WHITE		| 15
 <tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
 <tr><td><b>Example:</b></td><td colspan=2><pre>LOCATE(8,12);<br/>PRINT("Hello World!");</pre></td></tr>
 </table>
+
+| Note: |
+| :---  |
+| While in the MSX system BIOS the coordinates start at 1, in the MSX BASIC `LOCATE` instruction, it does so at 0.<br/>The fR3eL project libraries try to provide similar functions to those of MSX BASIC, which is why it uses the same range of values.<br/>This also affects the `GetCursorRow` and `GetCursorColumn` functions. |
 
 <br/>
 
@@ -243,14 +256,189 @@ Read [Appendix 1](#61-Supports-escape-sequences) for supported C escape secuence
 | :---  |
 | The empty character parameter is used to indicate that the first characters that do not correspond to a numerical figure must be printed.<br/><b>Example:</b> If we want a 5 character output for the number `123`, if we indicate that the empty character is `0`, the display will show `00123`. |
 
+<br/>
+
+### 4.11 bchput
+
+<table>
+<tr><td colspan=3><b>bchput</b></td></tr>
+<tr><td colspan=3>Displays a character or executes control code</td></tr>
+<tr><td><b>Function</b></td><td colspan=2>bchput(character)</td></tr>
+<tr><td>Input</td><td>[char]</td><td>character value or Control Codes/td></tr>
+<tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>bchput(0xA);//execute NewLine Control Code<br/>bchput('A');//display A</pre></td></tr>
+</table>
+
+<br/>
+
+### 4.12 GetColumns
+
+<table>
+<tr><td colspan=3><b>GetColumns</b></td></tr>
+<tr><td colspan=3>Provides the columns from current screen.</td></tr>
+<tr><td><b>Function</b></td><td colspan=2>GetColumns()</td></tr>
+<tr><td>Input</td><td colspan=2> --- </td></tr>
+<tr><td><b>Output</b></td><td>[char]</td><td>Columns value</td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>char columns=GetColumns();</pre></td></tr>
+</table>
+
+<br/>
+
+### 4.13 GetCursorRow
+
+<table>
+<tr><td colspan=3><b>GetCursorRow</b></td></tr>
+<tr><td colspan=3>Provides the current row-position of the cursor.</td></tr>
+<tr><td><b>Function</b></td><td colspan=2>GetCursorRow()</td></tr>
+<tr><td>Input</td><td colspan=2> --- </td></tr>
+<tr><td><b>Output</b></td><td>[char]</td><td>Cursor Row value (0-23)</td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>char curY=GetCursorRow();</pre></td></tr>
+</table>
+
+<br/>
+
+### 4.14 GetCursorColumn
+
+<table>
+<tr><td colspan=3><b>GetCursorColumn</b></td></tr>
+<tr><td colspan=3>Provides the current column-position of the cursor</td></tr>
+<tr><td><b>Function</b></td><td colspan=2>GetCursorColumn()</td></tr>
+<tr><td>Input</td><td colspan=2> --- </td></tr>
+<tr><td><b>Output</b></td><td>[char]</td><td>Cursor Column value (0-79)</td></tr>
+<tr><td><b>Example:</b></td><td colspan=2><pre>char curX=GetCursorColumn();</pre></td></tr>
+</table>
 
 <br/>
 
 ---
 
-## 5 Code Examples
+## 5 How does it work?
 
-### Source
+In this document we are going to focus on the operation of this library.
+For aspects related to the use of the compiler, I recommend consulting the fR3eL project page or tutorials on how to program applications for MSX with SDCC.
+
+The name and operation of the functions has been tried to be similar to that of MSX BASIC so that those who already know this programming language will find it easier to program with this library.
+
+The first thing we must do is initialize the screen mode. 
+Before using the `SCREEN0()` or `SCREEN1()` functions, it is recommended to first indicate the total number of columns `WIDTH()` and the colors `COLOR`, since it may affect differently how the screen will be displayed.
+
+Once this is done, you can print texts or numbers using the `PRINT`, `PrintLN`, `PrintNumber` or `PrintFNumber` functions.
+
+To have control over how your texts are displayed, you can use the `LOCATE` function or the supported control characters.
+Please note that when you initialize the screen with `SCREEN0` or `SCREEN1`, or when you clear the screen with `CLS`, the cursor will be placed at position 0.0.
+
+<br/>
+
+### 5.1 TEXT 1 and TEXT 2 modes
+
+An example of a use case would be to start the TEXT 2 screen mode (Screen 0 in 80 columns), to develop an application for MSX 2 or higher.
+
+To do this we must use `SCREEN0()`, but this function does not know if we want TEXT 1 mode (up to 40 columns) or TEXT 2 (40 to 80). 
+The way to differentiate between the two modes is to first indicate the number of columns in which we want to work with the `WIDTH()` function. 
+When it is greater than 40, the TEXT 2 mode will be activated.
+
+```c
+void main(void)
+{
+   COLOR(15,4,4);
+   WIDTH(80);
+   SCREEN0();  
+}
+```
+
+In Screen 0, we can change the colors at any time since this mode only uses two colors for the entire screen.
+
+<br/>
+
+### 5.2 GRAPHIC 1 mode
+
+Another use case would be to use GRAPHIC 1 mode with 32 columns. 
+It is also recommended to assign the total columns and colors before initializing the screen mode. 
+In this case, the initialization function fills the VRAM color table with the values that we have given with the `COLOR` function. 
+For this reason, changing the colors after initialization will not generate any effect, except for the border color.
+
+```c
+void main(void)
+{
+   COLOR(WHITE,DARK_BLUE,BLACK);
+   WIDTH(32);
+   SCREEN1();  
+}
+```
+
+#### 5.2.1 Set GRAPHIC 1 Colors
+
+This mode allows you to display more colors than TEXT 1 mode, but with some limitations. You can only assign two colors (ink and background) every 8 tiles.
+
+This library is not compiled with a function to change colors, but is included in the commented sources, to reduce the size of the library. 
+If you need it, you can uncomment it (in the source and header) and compile the library, or you can copy and paste this function into your project.
+
+```c
+/* =============================================================================
+ SetG1colors
+
+ Description: 
+			Assigns colors to a group of GRAPHIC1 mode tiles.
+		   
+ Input:		(char) Octet. Group of 8 tiles.
+			(char) Ink color (0-15)
+			(char) Background color (0-15)      
+ Output:   -
+============================================================================= */
+void SetG1colors(char octet, char INKcolor,char BGcolor)
+{
+	octet;		//A
+	INKcolor;	//L
+	BGcolor;	//Stack	
+__asm
+	push IX
+	ld   IX,#0
+	add  IX,SP
+	
+	ld   B,L	
+	
+	ld   HL,#0x2000
+	ld   D,#0
+	ld   E,A
+	add  HL,DE
+	
+	ld   C,4(IX)
+	ld   A,B
+	SLA  A
+	SLA  A
+	SLA  A
+	SLA  A	
+	or   C	
+	
+	call  0x004D	;MSX BIOS WRTVRM - Writes data in VRAM
+	
+	pop  IX
+__endasm;	
+}
+```
+
+<br/>
+
+### 5.3 More things
+
+You can improve the appearance by changing the graphic font. 
+To do this you can design a new one based on the one in the MSX system. 
+You will need a graphics tool and then obtain the data in C array format directly (if the tool has that option) or through a converter.
+In your project you must add code that dumps this data into the VRAM pattern table.
+
+<br/>
+
+---
+
+## 6 Code Examples
+
+In the source code [`examples/`](../examples/), you can find applications for testing and learning purposes.
+
+<br/>
+
+### 6.1 Example 1 (/doc_example)
+
+#### Source
 ```c
 /* =====================================================
 	Example TEXTMODE MSX ROM Library (fR3eL Project)
@@ -262,55 +450,63 @@ const char text01[] = "Example textmode Lib";
 
 void main(void)
 {
-  unsigned int uintValue=1234;
-  char charValue=71;
+   unsigned int uintValue=1234;
+   char charValue=71;
   
-  COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
-  WIDTH(40);
-  SCREEN0();
+   COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
+   WIDTH(40);
+   SCREEN0();
   
-  LOCATE(0,0);
-  PRINT("Line 1\n");
-  PrintLN("Line 2");
-  PRINT("Line 3");
+   PRINT("Line 1\n");
+   PrintLN("Line 2");
+   PRINT("Line 3");
   
-  PRINT("\n");
+   PRINT("\n");
   
-  PRINT("\n>PrintNumber:");
-  PrintNumber(1024);
+   PRINT("\n>PrintNumber:");
+   PrintNumber(1024);
   
-  PRINT("\n>PrintFNumber:");
-  PrintFNumber(charValue,'0',4); //"0071"
+   PRINT("\n>PrintFNumber:");
+   PrintFNumber(charValue,'0',4); //"0071"
   
-  PRINT("\n>Print Integer:");
-  PrintFNumber(uintValue,32,5); //" 1234"
+   PRINT("\n>Print Integer:");
+   PrintFNumber(uintValue,32,5); //" 1234"
   
-  PRINT("\n>Print cut number:");
-  PrintFNumber(uintValue,32,2); //"34"
+   PRINT("\n>Print cut number:");
+   PrintFNumber(uintValue,32,2); //"34"
   
-  LOCATE(8,11);
-  PRINT(text01);
+   LOCATE(8,11);
+   PRINT(text01);
   
 __asm   
-  call  0x009F ;BIOS CHGET One character input (waiting)
+   call  0x009F ;BIOS CHGET One character input (waiting)
 __endasm;
 }
 ```
 
-### Output
-![Example screenshot](Example_screenshot.png)
+#### Output
+![Example screenshot](doc_example_screenshot.png)
 
 <br/>
 
-You will find this example and others in the sources of this project [`examples/`](../examples/).
+### 6.2 Example 2 (/test)
+
+![Example screenshot](test_screenshot.png)
+
+<br/>
+
+### 6.3 Example 3 (/test80c)
+
+![Example screenshot](test80c_screenshot.png)
+
 
 <br/>
 
 ---
 
-## 6 Appendices
+## 7 Appendices
 
-### 6.1 Supports escape sequences
+### 7.1 Supports escape sequences
 
 #### Table of escape sequences
 
@@ -388,7 +584,7 @@ Hello everybody!
 
 ---
 
-## 7 References
+## 8 References
 
 - MSX Resource Center > [Wiki](https://www.msx.org/wiki/) > Main-ROM BIOS > [1.3 Displaying ](https://www.msx.org/wiki/Main-ROM_BIOS#Displaying)
 - MSX Resource Center > [Wiki](https://www.msx.org/wiki/) > [MSX Characters and Control Codes](https://www.msx.org/wiki/MSX_Characters_and_Control_Codes)

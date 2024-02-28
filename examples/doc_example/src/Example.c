@@ -15,7 +15,6 @@ void main(void)
   WIDTH(40);
   SCREEN0();
   
-  LOCATE(0,0);
   PRINT("Line 1\n");
   PrintLN("Line 2");
   PRINT("Line 3");

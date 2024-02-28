@@ -1,15 +1,16 @@
 /* =============================================================================
 	Test TEXTMODE MSX ROM Library (fR3eL Project)
-	Version: 1.3 (25/11/2023)
+	Version: 1.4 (27/02/2024)
 	Author: mvac7/303bcn
 	Architecture: MSX
 	Format: ROM
 	Programming language: C and Assembler
 	Compiler: SDCC 4.3 or newer
 	Description:
-		Test Textmode Library Text 1 (40 columns) and Graphic 1 (32 columns) modes.
+		Test TEXTMODE Library TEXT 1 (Screen 0/40col) and GRAPHIC 1 (Screen1/32col) modes.
 
 	History of versions:
+	- v1.4 (27/02/2024) Improvements and changes to the v1.5 library
 	- v1.3 (25/11/2023) update to SDCC (4.1.12) Z80 calling conventions
 	- v1.2 (6/04/2018)
 	- v1.1 (27/02/2017)
@@ -45,10 +46,19 @@ void testCLS(void);
 
 void PressAnyKey(void);
 
+void PrintExtendedGFXchar(char A);
+void PrintLine(char size);
+void DrawBox(char width, char height);
+
+void SetG1colors(char octet, char INKcolor,char BGcolor);
+
+char isText1Mode(void);
+
+
 
 
 // constants  ------------------------------------------------------------------
-const char text01[] = "Test Textmode Lib v1.4";
+const char text01[] = "Test Textmode Lib v1.5";
 
 const char text_32col[] = "----5----1----1----2----2----3--         0    5    0    5    0  ";
 const char text_40col[] = "----5----1----1----2----2----3----3----4         0    5    0    5    0    5    0";
@@ -69,13 +79,19 @@ const char presskey[] = "Press any key to continue";
 
 void main(void)
 {
-	COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
+	COLOR(WHITE,DARK_BLUE,BLACK);
 	WIDTH(32);
 	SCREEN1();
+	
+	SetG1colors(2,GRAY,DARK_BLUE);
+	SetG1colors(3,GRAY,DARK_BLUE);
 
-	LOCATE(3,11);
+	LOCATE(2,10);
+	DrawBox(28, 3);
+	LOCATE(5,11);
 	PRINT(text01);
-	//LOCATE(7,11);
+	
+	//LOCATE(7,12);
 	//PRINT(text02);
 
 	PressAnyKey(); 
@@ -91,6 +107,9 @@ void main(void)
 
 
 
+/* =============================================================================
+   Reads a value from memory.
+============================================================================= */
 char PEEK(uint address) __naked
 {
 address;
@@ -104,6 +123,9 @@ __endasm;
 
 
 
+/* =============================================================================
+   Reads a value from Video memory (VRAM).
+============================================================================= */
 char VPEEK(uint address) __naked
 {
 address;
@@ -115,7 +137,7 @@ __endasm;
 
 
 /* =============================================================================
-One character input (waiting)
+   One character input (waiting)
 ============================================================================= */
 char INKEY(void) __naked
 {
@@ -126,8 +148,10 @@ __endasm;
 
 
 
-// Generates a pause in the execution of n interruptions.
-// PAL: 50=1second. ; NTSC: 60=1second. 
+/* =============================================================================
+   Generates a pause in the execution of n interruptions.
+   PAL: 50=1second. ; NTSC: 60=1second. 
+============================================================================= */
 void WAIT(uint cicles)
 {
 	uint i;
@@ -139,167 +163,356 @@ void WAIT(uint cicles)
 
 // ############################################################### TEST functions
 
+/* =============================================================================
+   Test set in TEXT 1 mode (Screen 0/40col)
+============================================================================= */
 void test_SC0(void)
 {
 	COLOR(LIGHT_GREEN,DARK_GREEN,DARK_GREEN);
 	WIDTH(40);
 	SCREEN0();
-
-	LOCATE(0,0);  
-	PrintLN(">Test SCREEN0()");
+	
+	//LOCATE(0,0);  
+	PrintLN("Test TEXT 1 mode (Screen 0)");
 
 	testWIDTH();
-
+	
 	testPRINT();
 
 	testPrintNumber();
 
 	testCLS();
-	LOCATE(0,17);
-	if (VPEEK(0x0000)==62) PRINT(">>> ERROR"); 
-	else PRINT(">> OK");
 
 	PressAnyKey();
 }
 
 
 
+/* =============================================================================
+   Test set in Graphic 1 mode (Screen 0)
+============================================================================= */
 void test_SC1(void)
 {
-	COLOR(WHITE,LIGHT_BLUE,DARK_BLUE);
+	COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
 	WIDTH(32);
 	SCREEN1();  
-
-	LOCATE(0,0);
-	PrintLN(">Test SCREEN1()");
+	
+	//LOCATE(0,0);
+	PrintLN("Test GRAPHIC 1 mode (Screen 1)");
+	
+	SetG1colors(0,LIGHT_YELLOW,DARK_BLUE);
+	SetG1colors(2,CYAN,DARK_BLUE);
+	SetG1colors(3,CYAN,DARK_BLUE);
 
 	testWIDTH();
-
+	
 	testPRINT();
 
 	testPrintNumber();
 
 	testCLS();
-	LOCATE(0,17);
-	if (VPEEK(0x1800)==62) PRINT(">>> ERROR");  // ">"=62
-	else PRINT(">> OK");
 
 	PressAnyKey();
 }
 
 
 
+/* =============================================================================
+
+============================================================================= */
 void testWIDTH(void)
 {
-	char columns;
-
-	columns = PEEK(LINLEN);
-    
-	PRINT(">Test WIDTH(");
+	char columns = GetColumns();
+	
+	PrintLine(columns);
+   
+	PRINT("Test WIDTH - Columns=");
 	PrintNumber(columns);
-	PrintLN(")");
 
 	PRINT(text_LF);
 
-	if(columns<40) PrintLN(text_32col);  
-	else PrintLN(text_40col);
+	if(columns<40) PRINT(text_32col);  
+	else PRINT(text_40col);
 }
 
 
 
+/* =============================================================================
+   Test the functions to print texts. (LOCATE, PRINT and PrintLN)
+============================================================================= */
 void testPRINT(void)
 {
-	PrintLN(">Test PRINT and PrintLN");
+	//char cursorX;
+	char cursorY;
+	char columns = GetColumns();
+	
+	PrintLine(columns);
+	
+	PrintLN("Test PRINT and PrintLN");
 	PRINT(testString);
-	PrintLN("\n\n>Test PRINT Escape Sequences:");
-	PRINT("\tLine 1\n\tLine 2\n\tLine 3"); // \t Horizontal Tab
+	
+	PRINT(text_LF);	// CR Carriage Return	
+	PrintLine(columns);
+	
+	PrintLN("Test PRINT Escape Sequences:");
+	PRINT("\t<tab>Line 1\n\t<tab>Line 2\n\t<tab>Line 3"); // \t Horizontal Tab
 	PRINT(text_CR);	// CR Carriage Return
-	PRINT(">"); 
+	PRINT(">CR"); 
 	PRINT(text_LF);	// LF line Feed
-
-	PRINT("\\ <-- print Backslash\n");  // Backslash
-
-	PRINT("\1\x42 <-- extended graphic chars");  // print extended graphic characters (0x42 = smile)
-
-	//Draw a box
-	/*  PrintLN("\1\x58\1\x57\1\x57\1\x59");
-	PrintLN("\1\x56  \1\x56");
-	PrintLN("\1\x5A\1\x57\1\x57\1\x5B");*/
-
-	PRINT(text_LF);	// Newline
-
+	
 	//PRINT("\v");	// Place the cursor at the top of the screen
-	PrintLN("\' <-- Single quotation mark");  // Single quotation mark
-	PrintLN("\" <-- Double quotation mark");         // \" Double quotation mark
-	PrintLN("\? <-- Question mark");  // Question mark
-	PRINT("\a [Beep!]");  // Beep
+	
+	cursorY = GetCursorRow(); 
+	LOCATE(0,cursorY);
+	DrawBox(columns, 7);
 
+/*	
+	LOCATE(1,10);
+	cursorX = GetCursorColumn();
+	cursorY = GetCursorRow();
+	
+	LOCATE(1,19);
+	PRINT("cursorX");
+	PrintNumber(cursorX);
+	
+	LOCATE(1,20);
+	PRINT("cursorY");
+	PrintNumber(cursorY);*/
+	
+	
+	cursorY++;
+	LOCATE(1,cursorY++);
+	PRINT("\1\x42 <-- extended graphic chars");  // print extended graphic characters (0x42 = smile)
+	LOCATE(1,cursorY++);
+	PRINT("\\ <-- Backslash");  // Backslash
+	LOCATE(1,cursorY++);
+	PRINT("\' <-- Single quotation mark");  // Single quotation mark
+	LOCATE(1,cursorY++);
+	PRINT("\" <-- Double quotation mark");         // \" Double quotation mark
+	LOCATE(1,cursorY);
+	PRINT("\? <-- Question mark");  // Question mark
+	
 	PressAnyKey();
-	PRINT("\f <-- Formfeed (CLS)");	// Formfeed (CLS)
+	PrintLN("\f <-- Formfeed (clear screen)");	// Formfeed (CLS)
+	PRINT("\a [Beep!]");  // Beep
 	PressAnyKey();
 }
 
 
 
+/* =============================================================================
+   Test the functions to print numbers. (PrintNumber and PrintFNumber)
+============================================================================= */
 void testPrintNumber(void)
 {
-	unsigned int uintvalue=12345;
-	char charValue=71;
-
+	char charValue=42;
+	unsigned int uintValue=12345;
+	char columns = GetColumns();
+	
 	CLS();
 
-	PRINT(">Test PrintNumber(2400):"); 
+	PrintLN("Test Print Numbers");
+	PrintLine(columns);
+	
+	PrintLN("Variables:");
+	
+	PrintLN("char value = 42");
+	PrintLN("uint value = 12345");
+		
+	PRINT(text_LF);
+	
+	PrintLine(columns);
+
+	PRINT(">PrintNumber(7)   :");
+	PrintNumber(7);
+	
+	PRINT("\n>PrintNumber(2400):"); 
 	PrintNumber(2400);
 
-	PRINT("\n>Test PrintNumber(uint):");
-	PrintNumber(uintvalue);
+	PRINT("\n>PrintNumber(uint):");
+	PrintNumber(uintValue);
 
-	PRINT("\n>Test PrintNumber(char):");
+	PRINT("\n>PrintNumber(char):");
 	PrintNumber(charValue);
 
-	PRINT("\n>Test PrintNumber(0)   :");
-	PrintNumber(0);
+	PRINT(text_LF);
 
-	PRINT("\n\n");
-
-	PRINT(">Test PrintFNumber(2400,32,6):\n");
+	PRINT("\n>PrintFNumber(2400,32,6) :");
 	PrintFNumber(2400,32,6); //" 2400" Testing when the length parameter is above the maximum size (5) 
 
-	PRINT("\n>Test PrintFNumber(uint,32,5):\n");
-	PrintFNumber(uintvalue,32,5); //"12345"
+	PRINT("\n>PrintFNumber(uint,32,5) :");
+	PrintFNumber(uintValue,32,5); //"12345"
 
-	PRINT("\n>Test PrintFNumber(12345,0,3):\n");
+	PRINT("\n>PrintFNumber(12345,0,3) :");
 	PrintFNumber(12345,0,3); //"345"
 
-	PRINT("\n>Test PrintFNumber(71,0,3):\n");
-	PrintFNumber(71,0,3); //"71"
+	PRINT("\n>PrintFNumber(7,0,3)     :");
+	PrintFNumber(7,0,3); //"7"
 
-	PRINT("\n>Test PrintFNumber(char,' ',3):\n");
-	PrintFNumber(charValue,' ',3); //" 71"
+	PRINT("\n>PrintFNumber(char,' ',3):");
+	PrintFNumber(charValue,' ',3); //" 42"
 
-	PRINT("\n>Test PrintFNumber(71,48,3):\n");
-	PrintFNumber(7,48,3);  //"077"
+	PRINT("\n>PrintFNumber(7,48,3)    :");
+	PrintFNumber(7,48,3);  //"007"
 
-	PRINT("\n>Test PrintFNumber(char,'0',4):\n");
-	PrintFNumber(charValue,'0',4); //"0071"
+	PRINT("\n>PrintFNumber(char,'0',4):");
+	PrintFNumber(charValue,'0',4); //"0042"
+	
+	PRINT("\n>PrintFNumber(char,'_',5):");
+	PrintFNumber(charValue,'_',5); //"___42"
 
 	PressAnyKey();
 }
 
 
 
+/* =============================================================================
+   Test the CLS (Clear Screen) function.
+============================================================================= */
 void testCLS(void)
 {
-	CLS();   //Comment this, to test an error. 
-	LOCATE(0,16);
-	PRINT(">Test CLS()");
+	uint VRAMaddr;
+	
+	CLS();
+
+	//PRINT("Test ERROR and 0,0");
+	
+	LOCATE(0,21);
+	PRINT(">Test CLS() ");
+	
+	if(isText1Mode()==true) VRAMaddr=0x0000;
+	else VRAMaddr=0x1800;
+	
+	if (VPEEK(VRAMaddr)!=32) PRINT(">>> ERROR <<<");  // ">"=62
+	else PRINT("> OK");
 }
 
 
 
+/* =============================================================================
+   Print a message on line 24 and wait for a key press.
+============================================================================= */
 void PressAnyKey(void)
 {	
 	LOCATE(0,23);
 	PRINT(presskey);
 	INKEY();	
+}
+
+
+
+/* =============================================================================
+   Print an Extended Graphic char
+============================================================================= */
+void PrintExtendedGFXchar(char A)
+{
+	bchput(1);
+	bchput(A);
+}
+
+
+
+/* =============================================================================
+   Print a line.
+============================================================================= */
+void PrintLine(char size)
+{
+	char i;
+	
+	for(i=0;i<size;i++) PrintExtendedGFXchar(0x57);	
+}
+
+
+
+/* =============================================================================
+   Prints a box from the cursor position.
+============================================================================= */
+void DrawBox(char width, char height)
+{
+	char i;
+	char box_winside = width-2;
+	
+	char x = GetCursorColumn();
+	char y = GetCursorRow();
+	
+/*  PrintLN("\1\x58\1\x57\1\x57\1\x59");
+	PrintLN("\1\x56  \1\x56");
+	PrintLN("\1\x5A\1\x57\1\x57\1\x5B");*/
+	
+	PrintExtendedGFXchar(0x58);
+	PrintLine(box_winside);
+	PrintExtendedGFXchar(0x59);
+	
+	width--;
+	
+	for(i=y+1;i<y+(height-1);i++)
+	{
+		LOCATE(x,i);
+		PrintExtendedGFXchar(0x56);
+		LOCATE(x+width,i);
+		PrintExtendedGFXchar(0x56);
+	}
+	
+	LOCATE(x,y+height-1);
+	PrintExtendedGFXchar(0x5A);
+	PrintLine(box_winside);
+	PrintExtendedGFXchar(0x5B);	
+}
+
+
+
+/* =============================================================================
+ SetG1colors
+
+ Description: 
+			Assigns colors to a group of GRAPHIC1 mode tiles.
+		   
+ Input:		(char) Octet. Group of 8 tiles.
+			(char) Ink color (0-15)
+			(char) Background color (0-15)      
+ Output:   -
+============================================================================= */
+void SetG1colors(char octet, char INKcolor,char BGcolor)
+{
+	octet;		//A
+	INKcolor;	//L
+	BGcolor;	//Stack	
+__asm
+	push IX
+	ld   IX,#0
+	add  IX,SP
+	
+	ld   B,L	
+	
+	ld   HL,#0x2000
+	ld   D,#0
+	ld   E,A
+	add  HL,DE
+	
+	ld   C,4(IX)
+	ld   A,B
+	SLA  A
+	SLA  A
+	SLA  A
+	SLA  A	
+	or   C	
+	
+	call  0x004D	;MSX BIOS WRTVRM - Writes data in VRAM
+	
+	pop  IX
+__endasm;	
+}
+
+
+
+/* =============================================================================
+   Indicates whether Text 1 mode is active.
+   Output:	1=Yes/True ; 0=No/False
+============================================================================= */
+char isText1Mode(void)
+{
+	char *A;
+	A=(unsigned int *) RG1SAV;
+	if (*A&0b00010000) return 1; //Text 40col Mode
+	return 0;	
 }

@@ -12,11 +12,12 @@ Programming language: C and Z80 assembler
 
 This project is a library of functions for creating aplications in text mode.
 
-Works in T1 (screen 0, 40 columns), T2 (screen 0, 80 columns), and G1 (screen 1, 32 columns) modes.
+Works in Text 1 (screen 0, 40 columns), Text 2 (screen 0, 80 columns), and Graphic 1 (screen 1, 32 columns) modes.
 
-It uses the functions from the MSX BIOS, so it is designed to create applications in ROM format or binaries on MSX BASIC.
+This library uses the functions from the MSX BIOS, so it is designed to create applications in ROM format or binaries on MSX BASIC.
 
-It is designed to develop MSX applications using Small Device C Compiler (SDCC), although it is an opensource project. Feel free to use part or all of it to adapt it to other systems or development environments.
+It is designed to develop MSX applications using Small Device C Compiler (SDCC), although it is an opensource project. 
+Feel free to use part or all of it to adapt it to other systems or development environments.
 
 You can access the documentation here with [`How to use the library`](docs/HOWTO.md).
 
@@ -32,6 +33,7 @@ Enjoy it!
 
 ## History of versions:
 
+- v1.5 (24/02/2024) bchput recovery, add GetColumns, GetCursorRow and GetCursorColumn.
 - v1.4 (24/11/2023) Update to SDCC (4.1.12) Z80 calling conventions, add PrintLN function, remove bchput, and more improvements.
 - v1.3 (05/09/2019) Integer printing functions improved (PrintNumber & PrintFNumber). num2Dec16 becomes PrintFNumber.
 - v1.2 (03/04/2018)
@@ -60,3 +62,8 @@ Enjoy it!
 | **PrintLN**(text) | Displays a text string in the last position where the cursor is and adds a new line |
 | **PrintNumber**(number) | Prints an unsigned integer on the screen |
 | **PrintFNumber**(number, emptyChar, length) | Prints an unsigned integer on the screen with formatting parameters |
+| **bchput**(character) | Displays a character or executes control code |
+| **GetColumns**()      | Provides the columns from current screen           |
+| **GetCursorRow**()    | Provides the current row-position of the cursor    |
+| **GetCursorColumn**() | Provides the current column-position of the cursor |
+

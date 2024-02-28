@@ -2,8 +2,8 @@
   MSX TEXTMODE Library (fR3eL Project)
 
   Description:
-	 Library with functions to work in text mode in Screen 0 (40/80 columns), 
-	 and Screen 1. 
+	 Opensource library with functions in Text 1 (screen 0, 40 columns), 
+	 Text 2 (screen 0, 80 columns), and Graphic 1 (screen 1, 32 columns) modes. 
 
 	 It is designed to develop MSX applications using Small Device C Compiler 
 	 (SDCC), although it is an opensource project. Feel free to use part or 
@@ -36,6 +36,7 @@
 #define GREY         14
 #define WHITE        15
 #endif
+
 
 
 /* =============================================================================
@@ -164,6 +165,7 @@ void LOCATE(char x, char y);
 void PRINT(char* text);
 
 
+
 /* =============================================================================
  PrintLN
   
@@ -187,11 +189,10 @@ void PrintLN(char* text);
 			16-bit Integer to ASCII (decimal) based on num2Dec16 by baze
 			https://baze.sk/3sc/misc/z80bits.html#5.1
 			
- Input:    (unsigned int) numeric value          
+ Input:    (unsigned int) or (char) numeric value          
  Output:   -
 ============================================================================= */
 void PrintNumber(unsigned int value);
-
 
 
 
@@ -202,7 +203,7 @@ void PrintNumber(unsigned int value);
 			Displays an unsigned integer with formatting parameters, 
 			in the last position where the cursor is.
 		   
- Input:		(unsigned int or char) numeric value
+ Input:		(unsigned int) or (char) numeric value
 			(char) zero/empty Char: (0 = "", 32=' ', 48='0', etc.)
 			(char) length: 1 to 5          
  Output:   -
@@ -211,44 +212,72 @@ void PrintFNumber(unsigned int value, char emptyChar, char length);
 
 
 
-
 /* =============================================================================
  bchput
  
  Description: 
-         Displays one character (MSX BIOS CHPUT).
- Input:   (char) text char
- Output:  -
+			Displays a character or executes control code. 
+			(MSX BIOS CHPUT)
+ Input:		(char) character number
+ Output:	-
 ============================================================================= */
-//void bchput(char value);
+void bchput(char value);
 
 
 
 /* =============================================================================
-   Current row-position of the cursor
+ GetColumns
+ 
+ Description:
+			Provides the columns from current screen.
+ Input:	-
+ Output:	(char)
 ============================================================================= */
-//char GetRow(void)
+char GetColumns(void);
 
 
 
 /* =============================================================================
-Current column-position of the cursor
+ GetCursorRow
+ 
+ Description:
+			Provides the current row-position of the cursor
+ Input:		-
+ Output:	(char) (0-23)
 ============================================================================= */
-//char GetColumn(void)
+char GetCursorRow(void);
+
+
+
+/* =============================================================================
+ GetCursorColumn
+ 
+ Description:
+			Provides the current column-position of the cursor
+ Input:	-
+ Output:	(char)	TEXT 1 (0 to 39) 
+					TEXT 2 (0 to 79)
+					GRAPHIC 1 (0 to 31)
+============================================================================= */
+char GetCursorColumn(void);
 
 
 
 /* =============================================================================
    Displays the function keys
 ============================================================================= */
-//void KEYON(void)
+//void KEYON(void);
 
 
 
 /* =============================================================================
    Erase functionkey display
 ============================================================================= */
-//void KEYOFF(void)
+//void KEYOFF(void);
+
+
+
+//void SetKEY(char keyn,char* text);
 
 
 
@@ -256,7 +285,23 @@ Current column-position of the cursor
    Indicates whether Text 1 mode is active.
    Output:	1=Yes/True ; 0=No/False
 ============================================================================= */
-//char isText1Mode(void)
+//char isText1Mode(void);
+
+
+
+/* =============================================================================
+ SetG1colors
+
+ Description: 
+			Assigns colors to a group of GRAPHIC1 mode tiles.
+		   
+ Input:		(char) Octet. Group of 8 tiles.
+			(char) Ink color (0-15)
+			(char) Background color (0-15)      
+ Output:   -
+============================================================================= */
+//void SetG1colors(char octet, char INKcolor,char BGcolor);
+
 
 
 #endif

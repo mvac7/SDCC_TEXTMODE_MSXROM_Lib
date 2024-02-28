@@ -1,6 +1,6 @@
 /* =============================================================================
 	MSX ROM TEXTMODE Library (fR3eL Project)
-	Version: 1.4 (24/11/2023)
+	Version: 1.5 (24/02/2024)
 	Author: mvac7/303bcn
 	Architecture: MSX
 	Format: C Object (SDCC .rel)
@@ -8,8 +8,8 @@
 	Compiler: SDCC 4.3 or newer 
 
 	Description:
-	 Library with functions to work in text mode in Screen 0 (40/80 columns), 
-	 and Screen 1. 
+	 Opensource library with functions in Text 1 (screen 0, 40 columns), 
+	 Text 2 (screen 0, 80 columns), and Graphic 1 (screen 1, 32 columns) modes. 
 
 	 It is designed to develop MSX applications using Small Device C Compiler 
 	 (SDCC), although it is an opensource project. Feel free to use part or 
@@ -19,6 +19,8 @@
 	 http://baze.sk/3sc/misc/z80bits.html#5.1
 
 	History of versions:
+	- v1.5 (24/02/2024) bchput recovery, 
+						add GetColumns, GetCursorRow and GetCursorColumn
 	- v1.4 (24/11/2023) update to SDCC (4.1.12) Z80 calling conventions,
 					    add PrintLN function, remove bchput,
 					    and more improvements.
@@ -297,16 +299,17 @@ __endasm;
 			16-bit Integer to ASCII (decimal) based on num2Dec16 by baze
 			https://baze.sk/3sc/misc/z80bits.html#5.1
 			
- Input:    (unsigned int) numeric value          
+ Input:    (unsigned int) or (char) numeric value          
  Output:   -
 ============================================================================= */
 void PrintNumber(unsigned int value) __naked
 {
 value;	//HL 
+
+//PrintFNumber(value,0,5);
 __asm  
   ld   D,#0
   ld   E,#5
-  //  PrintFNumber(value,0,5);
   
 ; ------------------------------------------------  
 ;  HL = value
@@ -388,16 +391,16 @@ __endasm;
 			Displays an unsigned integer with formatting parameters, 
 			in the last position where the cursor is.
 		   
- Input:		(unsigned int or char) numeric value
+ Input:		(unsigned int) or (char) numeric value
 			(char) zero/empty Char: (0 = "", 32=' ', 48='0', etc.)
 			(char) length: 1 to 5          
  Output:   -
 ============================================================================= */
 void PrintFNumber(unsigned int value, char emptyChar, char length)
 {
-  value;       //HL
-  emptyChar;
-  length;
+  value;		//HL
+  emptyChar;	//Stack
+  length;		//Stack
 __asm
   push IX
   ld   IX,#0
@@ -418,55 +421,89 @@ __endasm;
 
 
 /* =============================================================================
-  bchput
-  
-  Description: Displays one character (MSX BIOS CHPUT)
-  Input:    (char) - char value          
-  Output:   -
+ bchput
+ 
+ Description: 
+			Displays a character or executes control code. 
+			(MSX BIOS CHPUT)
+ Input:		(char) character number
+ Output:	-
 ============================================================================= */
-/*void bchput(char value) __naked
+void bchput(char value) __naked
 {
-value;
+value;	//A
 __asm
-  jp   CHPUT
+  jp   BIOS_CHPUT
 __endasm;
-}*/
+}
 
 
 
 /* =============================================================================
-   Current row-position of the cursor
+ GetColumns
+ 
+ Description:
+			Provides the columns from current screen.
+ Input:	-
+ Output:	(char)
 ============================================================================= */
-/*char GetRow() __naked
+char GetColumns(void) __naked
+{
+__asm
+  ld   A,(#LINLEN)
+  ret
+__endasm;
+}
+
+
+
+/* =============================================================================
+ GetCursorRow
+ 
+ Description:
+			Provides the current row-position of the cursor
+ Input:		-
+ Output:	(char) (0-23)
+============================================================================= */
+char GetCursorRow(void) __naked
 {
 __asm
   ld   A,(#CSRY)
+  dec  A
   ret
 __endasm;
-} */
+}
 
 
 
 /* =============================================================================
-Current column-position of the cursor
+ GetCursorColumn
+ 
+ Description:
+			Provides the current column-position of the cursor
+ Input:	-
+ Output:	(char)	TEXT 1 (0 to 39) 
+					TEXT 2 (0 to 79)
+					GRAPHIC 1 (0 to 31)
 ============================================================================= */
-/*char GetColumn() __naked
+char GetCursorColumn(void) __naked
 {
 __asm
   ld   A,(#CSRX)
+  dec  A
   ret
 __endasm;
-} */
+}
 
 
 
 /* =============================================================================
    Displays the function keys
 ============================================================================= */
-/*void KEYON() __naked
+/*void KEYON(void) __naked
 {
 __asm
-  jp DSPFNK
+  jp   BIOS_DSPFNK
 __endasm;
 }*/
 
@@ -475,12 +512,16 @@ __endasm;
 /* =============================================================================
    Erase functionkey display
 ============================================================================= */
-/*void KEYOFF() __naked
+/*void KEYOFF(void) __naked
 {
 __asm
-  jp ERAFNK
+  jp   BIOS_ERAFNK
 __endasm;
 }*/
+
+
+
+//void SetKEY(char keyn,char* text);
 
 
 
@@ -497,3 +538,47 @@ char isText1Mode(void)
 	return 0;	
 }
 */
+
+
+
+/* =============================================================================
+ SetG1colors
+
+ Description: 
+			Assigns colors to a group of GRAPHIC1 mode tiles.
+		   
+ Input:		(char) Octet. Group of 8 tiles.
+			(char) Ink color (0-15)
+			(char) Background color (0-15)      
+ Output:   -
+============================================================================= */
+/*void SetG1colors(char octet, char INKcolor,char BGcolor)
+{
+	octet;		//A
+	INKcolor;	//L
+	BGcolor;	//Stack	
+__asm
+	push IX
+	ld   IX,#0
+	add  IX,SP
+	
+	ld   B,L	
+	
+	ld   HL,#0x2000
+	ld   D,#0
+	ld   E,A
+	add  HL,DE
+	
+	ld   C,4(IX)
+	ld   A,B
+	SLA  A
+	SLA  A
+	SLA  A
+	SLA  A	
+	or   C	
+	
+	call  0x004D	;MSX BIOS WRTVRM - Writes data in VRAM
+	
+	pop  IX
+__endasm;	
+}*/
