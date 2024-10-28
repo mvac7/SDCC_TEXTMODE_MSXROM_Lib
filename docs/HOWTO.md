@@ -35,7 +35,7 @@
 - [6 Code Examples](#6-Code-Examples)
     - [6.1 ExampleROM.c](#61-ExampleROM.c)
 	- [6.2 TestLib.c](#62-TestLib.c)
-	- [6.3 6.3 Test80c.c](#63-6.3 Test80c.c)
+	- [6.3 Test80c.c](#63-Test80c.c)
 - [7 Appendices](#7-Appendices)
     - [7.1 Escape sequences](#71-Escape-sequences)
 	- [7.2 Other scape codes](#72-Other-scape-codes)
@@ -575,7 +575,7 @@ It must be taken into account that the character code is equivalent to the corre
   PrintLN("\1\x5A\1\x57\1\x57\1\x5B");
 ```
 
-![Extended Graphic Characters Table](extended_graphic_characters.png)<br/>
+![Extended Graphic Characters Table](pics/extended_graphic_characters.png)<br/>
 _Extended Graphic Characters Table (By [MSX Resource Center](https://www.msx.org/wiki/MSX_Characters_and_Control_Codes#International_codes))_
 
 
