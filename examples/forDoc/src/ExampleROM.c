@@ -4,7 +4,8 @@
 
 #include "../include/textmode_MSX.h"
 
-const char text01[] = "Example textmode Lib";
+const char text01[] = "Example TEXTMODE Lib\n";
+const char text02[] = "Press a key to continue";
 
 void main(void)
 {
@@ -15,10 +16,13 @@ void main(void)
   WIDTH(40);
   SCREEN0();
   
+  PrintLN(text01);
+  
   PRINT("Line 1\n");
   PrintLN("Line 2");
-  PRINT("Line 3");
-  
+  PrintLN("Line 3\n");
+    
+  PRINT("\1\x42");
   PRINT("\n");
   
   PRINT("\n>PrintNumber:");
@@ -33,10 +37,11 @@ void main(void)
   PRINT("\n>Print cut number:");
   PrintFNumber(uintValue,32,2); //"34"
   
-  LOCATE(8,11);
-  PRINT(text01);
-  
+  LOCATE(8,20);
+  PRINT(text02);
+    
 __asm   
   call  0x009F ;BIOS CHGET One character input (waiting)
+  rst   0
 __endasm;
 }	

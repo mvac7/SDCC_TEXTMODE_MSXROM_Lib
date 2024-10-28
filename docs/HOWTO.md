@@ -33,8 +33,13 @@
 	- [5.2.1 Set GRAPHIC 1 Colors](#521-Set-GRAPHIC-1-Colors)
 	- [5.3 More things](#53-More-things)
 - [6 Code Examples](#6-Code-Examples)
-- [7 Appendices](#6-Appendices)
-    - [7.1 Supports escape sequences](#71-Supports-escape-sequences)
+    - [6.1 ExampleROM.c](#61-ExampleROM.c)
+	- [6.2 TestLib.c](#62-TestLib.c)
+	- [6.3 6.3 Test80c.c](#63-6.3 Test80c.c)
+- [7 Appendices](#7-Appendices)
+    - [7.1 Escape sequences](#71-Escape-sequences)
+	- [7.2 Other scape codes](#72-Other-scape-codes)
+	- [7.3 Extended Graphic Characters](#73-Extended-Graphic-Characters)
 - [8 References](#8-References)
 
 
@@ -194,7 +199,7 @@ WHITE		| 15
 
 <table>
 <tr><td colspan=3><b>PRINT</b></td></tr>
-<tr><td colspan=3>Displays a text string in the last position where the cursor is.<br/>Use the LOCATE function to indicate a specific position.</td></tr>
+<tr><td colspan=3>Displays a text string at the current cursor position.<br/>Use the LOCATE function to indicate a specific position.</td></tr>
 <tr><td><b>Function</b></td><td colspan=2>PRINT(text)</td></tr>
 <tr><td><b>Input</b></td><td>[char*]</td><td>String</td></tr>
 <tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
@@ -209,7 +214,7 @@ Read [Appendix 1](#61-Supports-escape-sequences) for supported C escape secuence
 
 <table>
 <tr><td colspan=3><b>PrintLN</b></td></tr>
-<tr><td colspan=3>Displays a text string in the last position where the cursor is and adds a new line.</td></tr>
+<tr><td colspan=3>Displays a text string at the current cursor position and adds a new line (CRLF) at the end.</td></tr>
 <tr><td><b>Function</b></td><td colspan=2>PrintLN(text)</td></tr>
 <tr><td><b>Input</b></td><td>[char*]</td><td>String<br/>(See escape codes table)</td></tr>
 <tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
@@ -222,7 +227,7 @@ Read [Appendix 1](#61-Supports-escape-sequences) for supported C escape secuence
 
 <table>
 <tr><td colspan=3><b>PrintNumber</b></td></tr>
-<tr><td colspan=3>Displays an unsigned integer in the last position where the cursor is.</td></tr>
+<tr><td colspan=3>Displays an unsigned integer at the current cursor position.</td></tr>
 <tr><td><b>Function</b></td><td colspan=2>PrintNumber(number)</td></tr>
 <tr><td><b>Input</b></td><td>[unsigned int] or [char]</td><td>numeric value</td></tr>
 <tr><td><b>Output</b></td><td colspan=2> --- </td></tr>
@@ -240,7 +245,7 @@ Read [Appendix 1](#61-Supports-escape-sequences) for supported C escape secuence
 
 <table>
 <tr><td colspan=3><b>PrintFNumber</b></td></tr>
-<tr><td colspan=3>Displays an unsigned integer with formatting parameters, in the last position where the cursor is.</td></tr>
+<tr><td colspan=3>Displays an unsigned integer with formatting parameters, at the current cursor position.</td></tr>
 <tr><td><b>Function</b></td><td colspan=2>PrintFNumber(number, emptyChar, length)</td></tr>
 <tr><td rowspan=3>Input</td><td>[unsigned int] or [char]</td><td>numeric value</td></tr>
 <tr><td>[char]</td><td>Empty character value: (0 = nothing, 32=' ', 48='0')</td></tr>
@@ -379,7 +384,8 @@ If you need it, you can uncomment it (in the source and header) and compile the 
  SetG1colors
 
  Description: 
-			Assigns colors to a group of GRAPHIC1 mode tiles.
+			Assigns colors to a group of GRAPHIC1 tiles.
+			ROM/MSX-BASIC environment
 		   
  Input:		(char) Octet. Group of 8 tiles.
 			(char) Ink color (0-15)
@@ -388,32 +394,32 @@ If you need it, you can uncomment it (in the source and header) and compile the 
 ============================================================================= */
 void SetG1colors(char octet, char INKcolor,char BGcolor)
 {
-	octet;		//A
-	INKcolor;	//L
-	BGcolor;	//Stack	
+  octet;    //A
+  INKcolor; //L
+  BGcolor;  //Stack	
 __asm
-	push IX
-	ld   IX,#0
-	add  IX,SP
-	
-	ld   B,L	
-	
-	ld   HL,#0x2000
-	ld   D,#0
-	ld   E,A
-	add  HL,DE
-	
-	ld   C,4(IX)
-	ld   A,B
-	SLA  A
-	SLA  A
-	SLA  A
-	SLA  A	
-	or   C	
-	
-	call  0x004D	;MSX BIOS WRTVRM - Writes data in VRAM
-	
-	pop  IX
+  push IX
+  ld   IX,#0
+  add  IX,SP
+
+  ld   B,L	
+
+  ld   HL,#0x2000
+  ld   D,#0
+  ld   E,A
+  add  HL,DE
+
+  ld   C,4(IX)
+  ld   A,B
+  SLA  A
+  SLA  A
+  SLA  A
+  SLA  A	
+  or   C	
+
+  call  0x004D	;MSX BIOS WRTVRM - Writes data in VRAM
+
+  pop  IX
 __endasm;	
 }
 ```
@@ -437,9 +443,9 @@ In the source code [`examples/`](../examples/), you can find applications for te
 
 <br/>
 
-### 6.1 Example 1 (/doc_example)
+### 6.1 ExampleROM.c
 
-[`examples/doc_example`](../examples/doc_example)
+[`examples/forDoc`](../examples/forDoc)
 
 #### Source
 ```c
@@ -449,63 +455,68 @@ In the source code [`examples/`](../examples/), you can find applications for te
 
 #include "../include/textmode_MSX.h"
 
-const char text01[] = "Example textmode Lib";
+const char text01[] = "Example TEXTMODE Lib\n";
+const char text02[] = "Press a key to continue";
 
 void main(void)
 {
-   unsigned int uintValue=1234;
-   char charValue=71;
+  unsigned int uintValue=1234;
+  char charValue=71;
   
-   COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
-   WIDTH(40);
-   SCREEN0();
+  COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
+  WIDTH(40);
+  SCREEN0();
   
-   PRINT("Line 1\n");
-   PrintLN("Line 2");
-   PRINT("Line 3");
+  PrintLN(text01);
   
-   PRINT("\n");
+  PRINT("Line 1\n");
+  PrintLN("Line 2");
+  PrintLN("Line 3\n");
+    
+  PRINT("\1\x42");
+  PRINT("\n");
   
-   PRINT("\n>PrintNumber:");
-   PrintNumber(1024);
+  PRINT("\n>PrintNumber:");
+  PrintNumber(1024);
   
-   PRINT("\n>PrintFNumber:");
-   PrintFNumber(charValue,'0',4); //"0071"
+  PRINT("\n>PrintFNumber:");
+  PrintFNumber(charValue,'0',4); //"0071"
   
-   PRINT("\n>Print Integer:");
-   PrintFNumber(uintValue,32,5); //" 1234"
+  PRINT("\n>Print Integer:");
+  PrintFNumber(uintValue,32,5); //" 1234"
   
-   PRINT("\n>Print cut number:");
-   PrintFNumber(uintValue,32,2); //"34"
+  PRINT("\n>Print cut number:");
+  PrintFNumber(uintValue,32,2); //"34"
   
-   LOCATE(8,11);
-   PRINT(text01);
-  
+  LOCATE(8,20);
+  PRINT(text02);
+    
 __asm   
-   call  0x009F ;BIOS CHGET One character input (waiting)
+  call  0x009F ;BIOS CHGET One character input (waiting)
+  rst   0
 __endasm;
 }
 ```
 
 #### Output
 
-![Example screenshot](doc_example_screenshot.png)
+![Example screenshot](pics/ExampleROM_screenshot.png)
 
 <br/>
 
-### 6.2 Example 2 (/test)
+### 6.2 TestLib.c
 
-[`examples/test`](../examples/test)
+[`examples/testLib`](../examples/testLib)
 
-![Example screenshot](test_screenshot.png)
+![Example screenshot](pics/testLib_screenshot.png)
 
 <br/>
 
-### 6.3 Example 3 (/test80c)
+### 6.3 Test80c.c
 
 [`examples/test80c`](../examples/test80c)
 
-![Example screenshot](test80c_screenshot.png)
+![Example screenshot](pics/test80c_screenshot.png)
 
 
 <br/>
@@ -514,7 +525,7 @@ __endasm;
 
 ## 7 Appendices
 
-### 7.1 Supports escape sequences
+### 7.1 Escape sequences
 
 #### Table of escape sequences
 
@@ -534,15 +545,15 @@ __endasm;
  
 <br/>
 
-#### Other scape codes
+### 7.2 Other scape codes
 
 - `\xhh` Print in the output the character/code given in the hexadecimal value (hh).
 
-- `\nnn` Print in the output the character/code given in the octal value (hh).
+- `\nnn` Print in the output the character/code given in the octal value (nnn).
 
 <br/>
 
-#### Extended Graphic Characters
+### 7.3 Extended Graphic Characters
 
 To print the graphic characters that are in the first positions of the MSX system graphic set (overlapping with the control codes in text mode), 
 you will have to use add the value 1 after the character code.

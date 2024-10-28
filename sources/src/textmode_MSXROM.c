@@ -8,14 +8,19 @@
 	Compiler: SDCC 4.3 or newer 
 
 	Description:
-	 Opensource library with functions in Text 1 (screen 0, 40 columns), 
-	 Text 2 (screen 0, 80 columns), and Graphic 1 (screen 1, 32 columns) modes. 
+	 Library of functions for developing text-mode applications.
+	 Supports the following display modes:
+	   - Text 1 (screen 0, 40 columns) 
+	   - Text 2 (screen 0, 80 columns) Requires MSX with V9938 and BIOS that 
+	                                   supports this mode.
+	   - Graphic 1 (screen 1, 32 columns) 
 
 	 It is designed to develop MSX applications using Small Device C Compiler 
 	 (SDCC), although it is an opensource project. Feel free to use part or 
 	 all of it to adapt it to other systems or development environments.
 
-	 16-bit Integer to ASCII based on num2Dec16 by baze
+	 Includes a 16-bit integer to ASCII conversion routine, based on 
+	 num2Dec16 by baze
 	 http://baze.sk/3sc/misc/z80bits.html#5.1
 
 	History of versions:
@@ -89,11 +94,12 @@ __endasm;
  WIDTH
  
  Description: 
-           Specifies the number of characters per line in text mode.
- Input:     1 to 40 in TEXT 1 mode (40 columns)
-           41 to 80 in TEXT 2 mode (80 columns)
-            1 to 32 in GRAPHIC 1 mode
- Output:   - 
+			Specifies the number of characters per line in text mode.
+ Input:		1 to 40 in T1 40 columns mode
+			41 to 80 in T2 80 columns mode (only MSX with V9938 and a BIOS that 
+                                           supports this mode)
+			1 to 32 in G1 mode
+ Output:	-  
 ============================================================================= */
 void WIDTH(char columns) __naked
 {
@@ -111,13 +117,13 @@ __endasm;
 /* =============================================================================
   COLOR
  
-  Description: 
-			Specifies the colors of the foreground, background, and border area.
-			Note: In TEST 1 mode the border color has no effect. 
+  Description:
+            Specifies the colors of the foreground, background, and border area.
+            Note: In TEST 1 mode the border color has no effect.
 			
   Input:    (char) ink (0 to 15)
-			(char) background (0 to 15)
-			(char) border (0 to 15)
+            (char) background (0 to 15)
+            (char) border (0 to 15)
 ============================================================================= */
 void COLOR(char ink, char background, char border) 
 {
@@ -206,8 +212,8 @@ __endasm;
  PRINT
   
  Description: 
-			Displays a text string in the last position where the cursor is.
-			Use the LOCATE function when you need to indicate a specific position.
+			Displays a text string at the current cursor position.
+			Use LOCATE function when you need to indicate a specific position.
                         
  Input:    (char*) String    
  Output:   -
@@ -243,9 +249,9 @@ void PRINT(char* text) __naked
 text;  
 __asm  
 PRNLOOP$:
-	ld   A,(hl)
-	or   A
-	ret	 Z
+	ld	 A,(HL)
+	or	 A		;IF \0 (null terminating character)
+	ret	 Z		;End of string
 
 	inc	 HL
 	
@@ -256,10 +262,8 @@ PRNLOOP$:
 	jr   PRNLOOP$
 	
 PRN_LFCR:
-;	ld	 A,#0x0a  ;\n
-	call BIOS_CHPUT
-	ld	 A,#0x0d  ;\r
-;   call BIOS_CHPUT	
+	call BIOS_CHPUT	 ;print /n
+	ld	 A,#0x0D     ;for print /r
 	ret
 	
 __endasm;
@@ -271,8 +275,8 @@ __endasm;
  PrintLN
   
  Description: 
-           Displays a text string in the last position where the cursor is 
-		   and adds a new line (CRLF).   
+           Displays a text string at the current cursor position and adds a 
+		   new line (CRLF) at the end. 
                         
  Input:    (char*) String    
  Output:   -
@@ -294,10 +298,7 @@ __endasm;
  PrintNumber
 
  Description: 
-            Displays an unsigned integer in the last position where the cursor is.
-
-			16-bit Integer to ASCII (decimal) based on num2Dec16 by baze
-			https://baze.sk/3sc/misc/z80bits.html#5.1
+           Displays an unsigned integer at the current cursor position.
 			
  Input:    (unsigned int) or (char) numeric value          
  Output:   -
@@ -308,76 +309,76 @@ value;	//HL
 
 //PrintFNumber(value,0,5);
 __asm  
-  ld   D,#0
-  ld   E,#5
+	ld   D,#0
+	ld   E,#5
   
-; ------------------------------------------------  
+; ------------------------------------------------ 
+; 16-bit Integer to ASCII (decimal)
+; Based on num2Dec16 by baze 
+; https://baze.sk/3sc/misc/z80bits.html#5.1
 ;  HL = value
 ;  D  = zero/empty Char (0,32,48)
 ;  E  = length
 PRNUM$:
 
-  ld   A,#5		;number Digit
-  ex   AF,AF
-  
-;for a future version with negative numbers  
-;if (HL<0) Print "-" 
-;   ld   A,#45
-;   call $Num4
-
+	ld   A,#5		;number Digit
+	ex   AF,AF
   	
-  ld   BC,#-10000
-  call $Num1
-  ld   BC,#-1000
-  call $Num1
-  ld   BC,#-100
-  call $Num1
-  ld   C,#-10
-  call $Num1
+	ld   BC,#-10000
+	call $Num1
+	ld   BC,#-1000
+	call $Num1
+	ld   BC,#-100
+	call $Num1
+	ld   C,#-10
+	call $Num1
 
 ;Last figure
-  ld   C,B
-  ld   D,#48          ;"0"
+	ld   C,B
+	ld   D,#48	;set "0"
 
-;  call $Num1
-;  ret   ; END
+;   call $Num1
+
+
+;   ret   ;<--- END
     
 $Num1:	
-  ld   A,#47     ;"0" ASCII code - 1
+	ld   A,#47     ;"0" ASCII code - 1
    
 $Num2:
-  inc  A
-  add  HL,BC
-  jr   C,$Num2
-	
-  sbc  HL,BC
-	
-  cp   #48       ;"0" ASCII code
-  jr   NZ,$Num3  ;if A!=48 then goto $Num3
-	
-  ld   A,D  ;(DE)
-  jr   $Num4
+	inc  A
+	add  HL,BC
+	jr   C,$Num2
+
+	sbc  HL,BC
+
+	cp   #48		;"0" ASCII code
+	jr   NZ,$Num3	;if A!=48 then goto $Num3
+
+	ld   A,D		;get ZeroDigit
+	jr   $Num4
 
 
 $Num3:
-  ;change space/empty for 0 zero ASCII code
-  ld   D,#48
+	;change space/empty for 0 zero ASCII code
+	ld   D,#48
 	
 $Num4:
-  ex   AF,AF
-  dec  A  ;number Digit
-  cp   E  ;length
-  jr  NC,$next5  ;IF num.Digit>length THEN dont print
+	ex   AF,AF
+	dec  A  ;number Digit
+	cp   E  ;length
+	jr   NC,$next5  ;IF num.Digit>length THEN dont print
 
-  ex   AF,AF
-  or   A
-  ret  Z  ;only print A>0
-  
-  jp   BIOS_CHPUT  ;Print digit
+	ex   AF,AF
+	or   A
+	ret  Z  ;only print A>0
+
+	jp   BIOS_CHPUT  ;Print digit
+
 
 $next5:
-  ex   AF,AF
-  ret
+	ex   AF,AF
+	ret
   
 __endasm;
 }
@@ -389,7 +390,7 @@ __endasm;
 
  Description: 
 			Displays an unsigned integer with formatting parameters, 
-			in the last position where the cursor is.
+			at the current cursor position.
 		   
  Input:		(unsigned int) or (char) numeric value
 			(char) zero/empty Char: (0 = "", 32=' ', 48='0', etc.)

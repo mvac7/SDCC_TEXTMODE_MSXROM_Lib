@@ -10,11 +10,14 @@ Programming language: C and Z80 assembler
 
 ## Description
 
-This project is a library of functions for creating aplications in text mode.
+This project is a library of functions for developing text-mode applications.
 
-Works in Text 1 (screen 0, 40 columns), Text 2 (screen 0, 80 columns), and Graphic 1 (screen 1, 32 columns) modes.
+Supports the following display modes:
+- Text 1 (screen 0, 40 columns) 
+- Text 2 (screen 0, 80 columns) Requires MSX with V9938 and BIOS that supports this mode.
+- Graphic 1 (screen 1, 32 columns)
 
-This library uses the functions from the MSX BIOS, so it is designed to create applications in ROM format or binaries on MSX BASIC.
+This library uses the functions of the MSX BIOS, so it is designed to create applications in ROM format or binaries on MSX BASIC.
 
 It is designed to develop MSX applications using Small Device C Compiler (SDCC), although it is an opensource project. 
 Feel free to use part or all of it to adapt it to other systems or development environments.
@@ -58,12 +61,11 @@ Enjoy it!
 | **SCREEN1**() | Initialice GRAPHIC 1 screen mode (32 columns x 24 lines) |
 | **CLS**() | Clear Screen. Fill Pattern Name Table with 0x20 character |
 | **LOCATE**(column, line) | Moves the cursor to the specified location |
-| **PRINT**(text) | Displays a text string in the last position where the cursor is |
-| **PrintLN**(text) | Displays a text string in the last position where the cursor is and adds a new line |
-| **PrintNumber**(number) | Prints an unsigned integer on the screen |
-| **PrintFNumber**(number, emptyChar, length) | Prints an unsigned integer on the screen with formatting parameters |
-| **bchput**(character) | Displays a character or executes control code |
+| **PRINT**(text) | Displays a text string at the current cursor position |
+| **PrintLN**(text) | Displays a text string at the current cursor position and adds a new line |
+| **PrintNumber**(number) | Displays an unsigned integer at the current cursor position |
+| **PrintFNumber**(number, emptyChar, length) | Displays an unsigned integer with formatting parameters, at the current cursor position |
+| **bchput**(character) | Displays one character |
 | **GetColumns**()      | Provides the columns from current screen           |
 | **GetCursorRow**()    | Provides the current row-position of the cursor    |
 | **GetCursorColumn**() | Provides the current column-position of the cursor |
-

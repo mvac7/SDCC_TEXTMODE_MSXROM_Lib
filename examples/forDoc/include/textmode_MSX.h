@@ -2,13 +2,12 @@
   MSX TEXTMODE Library (fR3eL Project)
 
   Description:
-	 Opensource library with functions in Text 1 (screen 0, 40 columns), 
-	 Text 2 (screen 0, 80 columns), and Graphic 1 (screen 1, 32 columns) modes. 
-
-	 It is designed to develop MSX applications using Small Device C Compiler 
-	 (SDCC), although it is an opensource project. Feel free to use part or 
-	 all of it to adapt it to other systems or development environments.
-
+	 Library of functions for developing text-mode applications.
+	 Supports the following display modes:
+	   - Text 1 (screen 0, 40 columns) 
+	   - Text 2 (screen 0, 80 columns) Requires MSX with V9938 and BIOS that 
+	                                   supports this mode.
+	   - Graphic 1 (screen 1, 32 columns)  
 ============================================================================= */
 #ifndef __TEXTMODE_H__
 #define __TEXTMODE_H__
@@ -43,13 +42,13 @@
  SCREEN0
  
  Description: 
-			Initialice TEXT 1 (40 columns) or TEXT 2 (80 columns) screen mode.
+           Initialice TEXT 1 (40 columns) or TEXT 2 (80 columns) screen mode.
 		   
-			Note: 
-			To set the T2 mode, you must first set 80 columns with the WIDTH 
-			function (only MSX computers with V9938 and BIOS that supports 
-			this mode).
-		   
+           Note: 
+             To set the T2 mode, you must first set 80 columns with the WIDTH
+			 function (only MSX computers with V9938 and BIOS that supports
+			 this mode).
+
  Input:    -
  Output:   -
 ============================================================================= */
@@ -62,6 +61,7 @@ void SCREEN0(void);
  
  Description: 
            Initialice GRAPHIC 1 screen mode (32 columns x 24 lines).
+
  Input:    -
  Output:   -
 ============================================================================= */
@@ -73,26 +73,28 @@ void SCREEN1(void);
  WIDTH
  
  Description: 
-           Specifies the number of characters per line in text mode.
- Input:     1 to 40 in TEXT 1 mode (40 columns)
-           41 to 80 in TEXT 2 mode (80 columns)
-            1 to 32 in GRAPHIC 1 mode
- Output:   - 
+			Specifies the number of characters per line in text mode.
+
+ Input:		 1 to 40 in T1 40 columns mode
+            41 to 80 in T2 80 columns mode (only MSX with V9938 and a BIOS that 
+                                            supports this mode)
+             1 to 32 in G1 mode
+ Output:	- 
 ============================================================================= */
 void WIDTH(char columns);
 
 
 
 /* =============================================================================
-  COLOR
+ COLOR
  
-  Description: 
-			Specifies the colors of the foreground, background, and border area.
-			Note: In TEST 1 mode the border color has no effect. 
-			
-  Input:    (char) ink (0 to 15)
-			(char) background (0 to 15)
-			(char) border (0 to 15)
+ Description:
+            Specifies the colors of the foreground, background, and border area.
+            Note: In TEST 1 mode the border color has no effect.
+
+ Input:    (char) ink (0 to 15)
+           (char) background (0 to 15)
+           (char) border (0 to 15)
 ============================================================================= */
 void COLOR(char ink, char background, char border);
 
@@ -103,6 +105,7 @@ void COLOR(char ink, char background, char border);
  
  Description: 
            Clear Screen. Fill Pattern Name Table with 0x20 character.
+
  Input:    -        
  Output:   - 
 ============================================================================= */
@@ -130,12 +133,12 @@ void LOCATE(char x, char y);
  PRINT
   
  Description: 
-			Displays a text string in the last position where the cursor is.
-			Use the LOCATE function when you need to indicate a specific position.
+			Displays a text string at the current cursor position.
+			Use LOCATE function when you need to indicate a specific position.             
                         
  Input:    (char*) String    
  Output:   -
- 
+
  Notes:
             Supports escape sequences:
              \a (0x07)	- Beep
@@ -170,8 +173,8 @@ void PRINT(char* text);
  PrintLN
   
  Description: 
-           Displays a text string in the last position where the cursor is 
-		   and adds a new line (CRLF).   
+           Displays a text string at the current cursor position and adds a 
+		   new line (CRLF) at the end. 
                         
  Input:    (char*) String    
  Output:   -
@@ -184,10 +187,7 @@ void PrintLN(char* text);
  PrintNumber
 
  Description: 
-            Displays an unsigned integer in the last position where the cursor is.
-
-			16-bit Integer to ASCII (decimal) based on num2Dec16 by baze
-			https://baze.sk/3sc/misc/z80bits.html#5.1
+           Displays an unsigned integer at the current cursor position.
 			
  Input:    (unsigned int) or (char) numeric value          
  Output:   -
@@ -201,12 +201,12 @@ void PrintNumber(unsigned int value);
 
  Description: 
 			Displays an unsigned integer with formatting parameters, 
-			in the last position where the cursor is.
-		   
+			at the current cursor position.
+
  Input:		(unsigned int) or (char) numeric value
 			(char) zero/empty Char: (0 = "", 32=' ', 48='0', etc.)
 			(char) length: 1 to 5          
- Output:   -
+ Output:	-
 ============================================================================= */
 void PrintFNumber(unsigned int value, char emptyChar, char length);
 
@@ -218,6 +218,7 @@ void PrintFNumber(unsigned int value, char emptyChar, char length);
  Description: 
 			Displays a character or executes control code. 
 			(MSX BIOS CHPUT)
+
  Input:		(char) character number
  Output:	-
 ============================================================================= */
@@ -229,8 +230,9 @@ void bchput(char value);
  GetColumns
  
  Description:
-			Provides the columns from current screen.
- Input:	-
+			Returns the number of columns in the current screen.
+
+ Input:	    -
  Output:	(char)
 ============================================================================= */
 char GetColumns(void);
@@ -241,7 +243,8 @@ char GetColumns(void);
  GetCursorRow
  
  Description:
-			Provides the current row-position of the cursor
+			Returns the current row-position of the cursor.
+
  Input:		-
  Output:	(char) (0-23)
 ============================================================================= */
@@ -253,7 +256,8 @@ char GetCursorRow(void);
  GetCursorColumn
  
  Description:
-			Provides the current column-position of the cursor
+			Returns the current column-position of the cursor.
+
  Input:	-
  Output:	(char)	TEXT 1 (0 to 39) 
 					TEXT 2 (0 to 79)
@@ -300,7 +304,7 @@ char GetCursorColumn(void);
 			(char) Background color (0-15)      
  Output:   -
 ============================================================================= */
-//void SetG1colors(char octet, char INKcolor,char BGcolor);
+//void SetG1colors(char octet, char INKcolor, char BGcolor);
 
 
 
