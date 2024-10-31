@@ -436,6 +436,12 @@ In your project you must add code that dumps this data into the VRAM pattern tab
 
 ## 6 Code Example
 
+In the following source code you can see a simple example of using the library. 
+
+You can find more extensive examples in the git project sources.
+
+<br/>
+
 ### Source
 ```c
 /* =====================================================
