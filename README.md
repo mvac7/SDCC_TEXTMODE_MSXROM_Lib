@@ -6,7 +6,9 @@ Format: C Object (SDCC .rel)
 Programming language: C and Z80 assembler
 ```
 
+<br/>
 
+---
 
 ## Description
 
@@ -32,7 +34,9 @@ This library is part of the [MSX fR3eL Project](https://github.com/mvac7/SDCC_MS
 
 Enjoy it!
 
+<br/>
 
+---
 
 ## History of versions:
 
@@ -42,14 +46,18 @@ Enjoy it!
 - v1.2 (03/04/2018)
 - v1.1 (27/02/2017)
 
+<br/>
 
+---
 
 ## Requirements
 
 - [Small Device C Compiler (SDCC) v4.3](http://sdcc.sourceforge.net/)
 - [Hex2bin v2.5](http://hex2bin.sourceforge.net/)
 
+<br/>
 
+---
 
 ## Functions
 
@@ -69,3 +77,41 @@ Enjoy it!
 | **GetColumns**()      | Provides the columns from current screen           |
 | **GetCursorRow**()    | Provides the current row-position of the cursor    |
 | **GetCursorColumn**() | Provides the current column-position of the cursor |
+
+<br/>
+
+---
+
+## Code Example
+
+In the git project [`examples/`](../examples/), you can find the source code of applications for testing and learning purposes.
+
+<br/>
+
+### ExampleROM
+
+Simple example of the use of the library (used in the documentation).
+
+[`examples/forDoc`](examples/forDoc)
+
+![Example screenshot](docs/pics/ExampleROM_screenshot.png)
+
+<br/>
+
+### TestLib
+
+Test the library functions in Text 1 (Screen 0 with 40 columns) and GRAPHIC 1 (Screen 1) modes of the TMS9918A.
+
+[`examples/testLib`](examples/testLib)
+
+![Example screenshot](docs/pics/testLib_screenshot.png)
+
+<br/>
+
+### Test80c
+
+Test the library functions in Text 2 mode (Screen 0 with 80 columns) of V9938 or higher.
+
+[`examples/test80c`](examples/test80c)
+
+![Example screenshot](docs/pics/test80c_screenshot.png)

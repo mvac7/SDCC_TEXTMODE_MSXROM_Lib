@@ -32,10 +32,7 @@
 	- [5.2 GRAPHIC 1 mode](#52-GRAPHIC-1-mode)
 	- [5.2.1 Set GRAPHIC 1 Colors](#521-Set-GRAPHIC-1-Colors)
 	- [5.3 More things](#53-More-things)
-- [6 Code Examples](#6-Code-Examples)
-    - [6.1 ExampleROM](#61-ExampleROM)
-	- [6.2 TestLib](#62-TestLib)
-	- [6.3 Test80c](#63-Test80c)
+- [6 Code Example](#6-Code-Example)
 - [7 Appendices](#7-Appendices)
     - [7.1 Escape sequences](#71-Escape-sequences)
 	- [7.2 Other scape codes](#72-Other-scape-codes)
@@ -437,17 +434,9 @@ In your project you must add code that dumps this data into the VRAM pattern tab
 
 ---
 
-## 6 Code Examples
+## 6 Code Example
 
-In the source code [`examples/`](../examples/), you can find applications for testing and learning purposes.
-
-<br/>
-
-### 6.1 ExampleROM
-
-[`examples/forDoc`](../examples/forDoc)
-
-#### Source
+### Source
 ```c
 /* =====================================================
 	Example TEXTMODE MSX ROM Library (fR3eL Project)
@@ -498,25 +487,9 @@ __endasm;
 }
 ```
 
-#### Output
+### Output
 
 ![Example screenshot](pics/ExampleROM_screenshot.png)
-
-<br/>
-
-### 6.2 TestLib
-
-[`examples/testLib`](../examples/testLib)
-
-![Example screenshot](pics/testLib_screenshot.png)
-
-<br/>
-
-### 6.3 Test80c
-
-[`examples/test80c`](../examples/test80c)
-
-![Example screenshot](pics/test80c_screenshot.png)
 
 
 <br/>
