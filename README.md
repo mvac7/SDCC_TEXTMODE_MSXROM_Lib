@@ -4,7 +4,7 @@
 <tr><td rowspan=2>Name</td><td>textmode_MSXBIOS</td></tr>
 <tr><td>textmode_MSXDOS</td></tr>
 <tr><td>Architecture</td><td>MSX</td></tr>
-<tr><td>Environment</td><td>ROM or MSX BASIC</td></tr>
+<tr><td>Environment</td><td>ROM, MSX BASIC or MSXDOS</td></tr>
 <tr><td>Format</td><td>SDCC Relocatable object file (.rel)</td></tr>
 <tr><td>Compiler</td><td>SDCC v4.4 or newer</td></tr>
 </table>
@@ -19,15 +19,15 @@ C function library with functions for developing text-mode applications.
 Includes functions for screen initialization and printing of texts and numbers.
 
 Supports the following display modes:
-- Text 1 (screen 0, 40 columns) 
-- Text 2 (screen 0, 80 columns) Requires MSX with V9938 and BIOS that supports this mode.
-- Graphic 1 (screen 1, 32 columns)
+- Text1 (Screen 0, 40 columns) 
+- Text2 (Screen 0, 80 columns) Requires MSX with V9938 and BIOS that supports this mode.
+- Graphic1 (Screen 1, 32 columns)
 
 In this project you will find two libraries for different environments:
 - **textmode_MSXBIOS** Uses the MSX BIOS. It takes up very little memory. You can use it to develop applications in ROM format or programs that run from MSX BASIC environment.
 - **textmode_MSXDOS** Uses the MSX BIOS functions via inter-slot call (CALSLT). You can use it to develop applications for the MSX-DOS environment.
 
-This library uses the functions of the MSX BIOS, so it is designed to develop applications for ROM or MSXBASIC environments, using the Small Device C Compiler [(SDCC)](http://sdcc.sourceforge.net/) cross compiler.
+Use this library for developing MSX applications using Small Device C Compiler [`SDCC`](http://sdcc.sourceforge.net/).
 
 You can access the documentation here with [`How to use the library`](docs/HOWTO.md).
 
@@ -42,7 +42,7 @@ Enjoy it!
 
 | NOTE |
 | :--- | 
-| For the number printing function, I have adapted a routine to convert a 16-bit value to ASCII taken from the Baze collection.<br/>[(WEB)](http://baze.sk/3sc/misc/z80bits.html#5.1) |
+| For the number printing function, I have adapted a routine to convert a 16-bit value to ASCII taken from the [Baze's Z80 routine collection](http://baze.sk/3sc/misc/z80bits.html#5.1). |
 
 <br/>
 
@@ -108,7 +108,7 @@ Enjoy it!
 
 ## Code Example
 
-In the git project [`examples/`](../examples/), you can find the source code of applications for testing and learning purposes.
+Within the version directories by environment, you'll find programs I used for library testing that can serve as examples for learning how to use it.
 
 <br/>
 

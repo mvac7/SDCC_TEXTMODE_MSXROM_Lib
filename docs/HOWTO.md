@@ -35,10 +35,10 @@
 - [6 Code Example](#6-Code-Example)
 - [7 Appendices](#7-Appendices)
     - [7.1 Escape sequences](#71-Escape-sequences)
-	- [7.2 Other scape codes](#72-Other-scape-codes)
-	- [7.3 Extended Graphic Characters](#73-Extended-Graphic-Characters)
+	- [7.2 New line](#72-New-line)
+	- [7.3 Other scape codes](#73-Other-scape-codes)
+	- [7.4 Extended Graphic Characters](#74-Extended-Graphic-Characters)
 - [8 References](#8-References)
-
 
 <br/>
 
@@ -46,17 +46,24 @@
 
 ## 1 Description
 
-This project is a library of functions for creating aplications in text mode.
+C function library with functions for developing text-mode applications.
+Includes functions for screen initialization and printing of texts and numbers.
 
-Works in T1 (screen 0, 40 columns), T2 (screen 0, 80 columns), and G1 (screen 1, 32 columns) modes.
+Supports the following display modes:
+- Text1 (Screen 0, 40 columns) 
+- Text2 (Screen 0, 80 columns) Requires MSX with V9938 and BIOS that supports this mode.
+- Graphic1 (Screen 1, 32 columns)
 
-It uses the functions from the MSX BIOS, so it is designed to create applications in ROM format or binaries on MSX BASIC.
+In this project you will find two libraries for different environments:
+- **textmode_MSXBIOS** Uses the MSX BIOS. It takes up very little memory. You can use it to develop applications in ROM format or programs that run from MSX BASIC environment.
+- **textmode_MSXDOS** Uses the MSX BIOS functions via inter-slot call (CALSLT). You can use it to develop applications for the MSX-DOS environment.
 
-It is designed to develop MSX applications using Small Device C Compiler (SDCC), although it is an opensource project. Feel free to use part or all of it to adapt it to other systems or development environments.
+This library is designed to develop MSX applications using Small Device C Compiler [`SDCC`](http://sdcc.sourceforge.net/).
 
-I have adapted a routine for converting a 16 Bits value to ASCII for printing numbers, extracted from the Baze collection [(WEB)](http://baze.sk/3sc/misc/z80bits.html#5.1). 
+These libraries are part of the [MSX fR3eL Project](https://github.com/mvac7/SDCC_MSX_fR3eL).
 
-This library is part of the [MSX fR3eL Project](https://github.com/mvac7/SDCC_MSX_fR3eL).
+This project is open source under the [MIT license](LICENSE).
+You can add part or all of this code in your application development or include it in other libraries/engines.
 
 <br/>
 
@@ -64,7 +71,7 @@ This library is part of the [MSX fR3eL Project](https://github.com/mvac7/SDCC_MS
 
 ## 2 Requirements
 
-- [Small Device C Compiler (SDCC) v4.3](http://sdcc.sourceforge.net/)
+- [Small Device C Compiler (SDCC) v4.4](http://sdcc.sourceforge.net/)
 - [Hex2bin v2.5](http://hex2bin.sourceforge.net/)
 
 
@@ -713,43 +720,7 @@ hex2bin -e COM build\Example02.ihx
  
 <br/>
 
-### 7.2 Other scape codes
-
-- `\xhh` Print in the output the character/code given in the hexadecimal value (hh).
-
-- `\nnn` Print in the output the character/code given in the octal value (nnn).
-
-<br/>
-
-### 7.3 Extended Graphic Characters
-
-To print the graphic characters that are in the first positions of the MSX system graphic set (overlapping with the control codes in text mode), 
-you will have to use add the value 1 after the character code.
-
-`\1` + `\xhh`
-
-It must be taken into account that the character code is equivalent to the corresponding one of the graphic set added to 64.
-
-```c
-  PRINT("\1\x42");   //print smile (2 + 64) = 42 hexadecimal
-```
-
-**Example:**
-
-```c
-//Draw a box
-  PrintLN("\1\x58\1\x57\1\x57\1\x59");
-  PrintLN("\1\x56  \1\x56");
-  PrintLN("\1\x5A\1\x57\1\x57\1\x5B");
-```
-
-![Extended Graphic Characters Table](pics/extended_graphic_characters.png)<br/>
-_Extended Graphic Characters Table (By [MSX Resource Center](https://www.msx.org/wiki/MSX_Characters_and_Control_Codes#International_codes))_
-
-
-<br/>
-
-#### New line
+### 7.2 New line
 
 In the MSX system, in order to process a New Line, it requires the use of two control codes: Carriage Return (0x0D) and Line Feed (0x0A).
 If we add a `\n` to a text string in C, when compiling the code of an LF will be obtained, so in execution mode we would obtain a positioning of the cursor at the beginning of the line but without the jump to the next line .
@@ -766,6 +737,43 @@ Output:
 Hello World!
 Hello everybody!
 ```
+ 
+<br/>
+
+### 7.3 Other scape codes
+
+- `\xhh` Print in the output the character/code given in the hexadecimal value (hh).
+
+- `\nnn` Print in the output the character/code given in the octal value (nnn).
+
+<br/>
+
+### 7.4 Extended Graphic Characters
+
+To print the graphic characters that are in the first positions of the MSX system graphic set (overlapping with the control codes in text mode), 
+you will have to use add the value 1 after the character code.
+
+`\1` + `\xhh`
+
+It must be taken into account that the character code is equivalent to the corresponding one of the graphic set added to 64.
+
+```c
+  PRINT("\1\x42");   //print smile (2 + 64) = 42 hexadecimal
+```
+
+#### Example:
+
+```c
+//Draw a box
+  PrintLN("\1\x58\1\x57\1\x57\1\x59");
+  PrintLN("\1\x56  \1\x56");
+  PrintLN("\1\x5A\1\x57\1\x57\1\x5B");
+```
+
+#### Extended Graphic Characters Table
+![Extended Graphic Characters Table](pics/extended_graphic_characters.png)<br/>
+_(By [MSX Resource Center](https://www.msx.org/wiki/MSX_Characters_and_Control_Codes#International_codes))_
+
 
 <br/>
 
