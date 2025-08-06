@@ -376,47 +376,98 @@ This mode allows you to display more colors than TEXT 1 mode, but with some limi
 This library is not compiled with a function to change colors, but is included in the commented sources, to reduce the size of the library. 
 If you need it, you can uncomment it (in the source and header) and compile the library, or you can copy and paste this function into your project.
 
+
+##### ROM or MSXBASIC
+
 ```c
 /* =============================================================================
- SetG1colors
-
- Description: 
-			Assigns colors to a group of GRAPHIC1 tiles.
-			ROM/MSX-BASIC environment
-		   
- Input:		(char) Octet. Group of 8 tiles.
-			(char) Ink color (0-15)
-			(char) Background color (0-15)      
- Output:   -
+SetG1colors
+Description: 
+		Assigns colors to a group of GRAPHIC1 tiles.
+		ROM/MSX-BASIC environment
+	   
+Input:	(char) Octet. Group of 8 tiles.
+		(char) Ink color (0-15)
+		(char) Background color (0-15)      
+Output:	-
 ============================================================================= */
-void SetG1colors(char octet, char INKcolor,char BGcolor)
+void SetG1colors(char octet, char INKcolor, char BGcolor)
 {
-  octet;    //A
-  INKcolor; //L
-  BGcolor;  //Stack	
+octet;		//A
+INKcolor;	//L
+BGcolor;	//Stack	
 __asm
-  push IX
-  ld   IX,#0
-  add  IX,SP
+	push IX
+	ld   IX,#0
+	add  IX,SP
 
-  ld   B,L	
+	ld   B,L	
 
-  ld   HL,#0x2000
-  ld   D,#0
-  ld   E,A
-  add  HL,DE
+	ld   HL,#0x2000
+	ld   D,#0
+	ld   E,A
+	add  HL,DE
 
-  ld   C,4(IX)
-  ld   A,B
-  SLA  A
-  SLA  A
-  SLA  A
-  SLA  A	
-  or   C	
+	ld   A,B
+	add  A
+	add  A
+	add  A
+	add  A	
+	or   4(IX)	
 
-  call  0x004D	;MSX BIOS WRTVRM - Writes data in VRAM
+	call  0x004D	//MSX BIOS WRTVRM - Writes data in VRAM
 
-  pop  IX
+	pop  IX
+__endasm;	
+}
+```
+
+<br/>
+
+##### MSX-DOS
+
+```c
+/* =============================================================================
+SetG1colors
+Description: 
+		Assigns colors to a group of GRAPHIC1 tiles.
+		MSX-DOS environment.
+	   
+Input:	(char) Octet. Group of 8 tiles.
+		(char) Ink color (0-15)
+		(char) Background color (0-15)      
+Output:	-
+============================================================================= */
+void SetG1colors(char octet, char INKcolor, char BGcolor)
+{
+octet;		//A
+INKcolor;	//L
+BGcolor;	//Stack	
+__asm
+	push IX
+	ld   IX,#0
+	add  IX,SP
+
+	ld   B,L	
+
+	ld   HL,#0x2000
+	ld   D,#0
+	ld   E,A
+	add  HL,DE
+
+	ld   A,B
+	add  A
+	add  A
+	add  A
+	add  A	
+	or   4(IX)	
+
+	ld   IX,#0x004D     //MSX BIOS   WRTVRM Writes data in VRAM
+	ld   IY,(#0xFCC0)   //System var EXPTBL-1 (FCC1h-1) main BIOS-ROM slot address
+	call 0x001C         //MSX BIOS   CALSLT Executes inter-slot call
+	ei
+
+	pop  IX
 __endasm;	
 }
 ```
@@ -442,63 +493,201 @@ You can find more extensive examples in the git project sources.
 
 <br/>
 
-### Source
-```c
-/* =====================================================
-   Example TEXTMODE MSX ROM Library (fR3eL Project)
-======================================================== */
+### 6.1 Example 1 ROM
 
-#include "../include/textmode_MSX.h"
+In this source code you will find a simple example of how to use this library in the ROM environment.
+
+Requires the following items:
+- Startup file for MSX 8/16K ROM [crt0_MSX816kROM4000](https://github.com/mvac7/SDCC_startup_MSX816kROM4000)
+- textmode_MSXBIOS Library
+
+<br/>
+
+And you need the following applications to compile and generate the final ROM:
+- [Small Device C Compiler (SDCC) v4.4](http://sdcc.sourceforge.net/)
+- [Hex2bin v2.5](http://hex2bin.sourceforge.net/)
+
+![Example screenshot](pics/ExampleROM_screenshot.png)
+
+<br/>
+
+#### Source
+```c
+/* =============================================================================
+# Example01.c
+
+- Version: 1.0
+- Architecture: MSX
+- Format: 8K ROM
+- Programming language: C and Z80 assembler
+- Compiler: SDCC 4.4
+
+## Description:
+	Simple example of the textmode_MSXBIOS Library (fR3eL Project)
+============================================================================= */
+#include "textmode_MSX.h"
 
 const char text01[] = "Example TEXTMODE Lib\n";
 const char text02[] = "Press a key to continue";
 
 void main(void)
 {
-  unsigned int uintValue=1234;
-  char charValue=71;
-  
-  COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
-  WIDTH(40);
-  SCREEN0();
-  
-  PrintLN(text01);
-  
-  PRINT("Line 1\n");
-  PrintLN("Line 2");
-  PrintLN("Line 3\n");
+	unsigned int uintValue=1234;
+	char charValue=71;
+
+	COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
+	WIDTH(40);
+	SCREEN0();
+
+	PrintLN(text01);
+
+	PRINT("PRINT:");
+	PRINT("Line 1\n");
+	
+	PRINT("PrintLN:");
+	PrintLN("Line 2");
+	
+	PrintLN("Line 3");
+
+	PrintLN("");					//print a new line (CR)
+
+	PRINT("\1\x42");				//print smile (2 + 64) = 42 hexadecimal
+	
+	PrintLN("\n");					//print 2 Carriage Return (CR) with Line Feed (LF)
+
+	PRINT(">PrintNumber:");
+	PrintNumber(1024);
+
+	PRINT("\n>PrintFNumber:");
+	PrintFNumber(charValue,'0',4);	//"0071"
+
+	PRINT("\n>Print Integer:");
+	PrintFNumber(uintValue,32,5);	//" 1234"
+
+	PRINT("\n>Print cut number:");
+	PrintFNumber(uintValue,32,2);	//"34"
+
+	LOCATE(8,20);
+	PRINT(text02);
     
-  PRINT("\1\x42");   //print smile (2 + 64) = 42 hexadecimal
-  PRINT("\n");
-  
-  PRINT("\n>PrintNumber:");
-  PrintNumber(1024);
-  
-  PRINT("\n>PrintFNumber:");
-  PrintFNumber(charValue,'0',4); //"0071"
-  
-  PRINT("\n>Print Integer:");
-  PrintFNumber(uintValue,32,5); //" 1234"
-  
-  PRINT("\n>Print cut number:");
-  PrintFNumber(uintValue,32,2); //"34"
-  
-  LOCATE(8,20);
-  PRINT(text02);
-    
-__asm   
-  call  0x009F ;BIOS CHGET One character input (waiting)
-  rst   0
-__endasm;
+// execute BIOS CHGET - One character input (waiting)
+__asm call 0x009F __endasm;	
 }
 ```
 
-### Output
+<br/>
 
-![Example screenshot](pics/ExampleROM_screenshot.png)
+#### For compile:
 
+First you must compile the source with SDCC as follows:
+
+```
+sdcc -mz80 --code-loc 0x4020 --data-loc 0xC000 --use-stdout --no-std-crt0 crt0_MSX816kROM4000.rel textmode_MSXBIOS.rel Example01.c
+```
+
+If no error is displayed, you should run hex2bin to convert the SDCC output to a binary file.
+
+```
+hex2bin -e ROM -l 2000 Example01.ihx
+```
 
 <br/>
+
+
+
+### 6.2 Example 2 MSX-DOS
+
+In this source code you will find a simple example of how to use this library in the MSX-DOS environment.
+
+Requires the following items:
+- Startup file for MSX-DOS environment [crt0_MSXDOS.rel](https://github.com/mvac7/SDCC_startup_MSXDOS)
+- textmode_MSXDOS Library
+
+<br/>
+
+And you need the following applications to compile and generate the final ROM:
+- [Small Device C Compiler (SDCC) v4.4](http://sdcc.sourceforge.net/)
+- [Hex2bin v2.5](http://hex2bin.sourceforge.net/)
+
+![Example screenshot](pics/TEST_0004.png)
+
+#### Source
+
+```c
+* =============================================================================
+# Example02.c
+
+- Version: 1.0
+- Architecture: MSX
+- Format: MSX-DOS
+- Programming language: C and Z80 assembler
+- Compiler: SDCC 4.4
+
+## Description:
+	Simple example of the textmode_MSXDOS Library (fR3eL Project)
+============================================================================= */
+#include "textmode_MSX.h"
+
+const char text01[] = "Example textmode_MSXDOS Lib\n";
+
+char main(void)
+{
+	unsigned int uintValue=1234;
+	char charValue=71;
+
+	PrintLN(text01);
+
+	PRINT("PRINT:");
+	PRINT("Line 1\n");
+	
+	PRINT("PrintLN:");
+	PrintLN("Line 2");
+	
+	PrintLN("Line 3");
+
+	PrintLN("");					//print a new line (CR)
+
+	PRINT("\1\x42");				//print smile (2 + 64) = 42 hexadecimal
+	
+	PrintLN("\n");					//print 2 Carriage Return (CR) with Line Feed (LF)
+
+	PRINT(">PrintNumber:");
+	PrintNumber(1024);
+
+	PRINT("\n>PrintFNumber:");
+	PrintFNumber(charValue,'0',4);	//"0071"
+
+	PRINT("\n>Print Integer:");
+	PrintFNumber(uintValue,32,5);	//" 1234"
+
+	PRINT("\n>Print cut number:");
+	PrintFNumber(uintValue,32,2);	//"34"
+
+	PrintLN("\n");					//print 2 CRLF
+	PRINT("End");
+	
+	return 0;
+}
+```
+
+<br/>
+
+#### For compile:
+
+First you must compile the source with SDCC as follows:
+
+```
+sdcc -mz80 -o build\ --code-loc 0x0170 --data-loc 0 --use-stdout --no-std-crt0 crt0_MSXDOS.rel textmode_MSXDOS.rel Example02.c
+```
+
+If no error is displayed, you should run hex2bin to convert the SDCC output to a binary file.
+
+```
+hex2bin -e COM build\Example02.ihx
+```
+
+<br/>
+
 
 ---
 

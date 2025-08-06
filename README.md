@@ -1,10 +1,13 @@
-# TEXTMODE MSX ROM Library (fR3eL Project)
+# TEXTMODE MSX SDCC Library (fR3eL Project)
 
-```
-Architecture: MSX
-Format: C Object (SDCC .rel)
-Programming language: C and Z80 assembler
-```
+<table>
+<tr><td rowspan=2>Name</td><td>textmode_MSXBIOS</td></tr>
+<tr><td>textmode_MSXDOS</td></tr>
+<tr><td>Architecture</td><td>MSX</td></tr>
+<tr><td>Environment</td><td>ROM or MSX BASIC</td></tr>
+<tr><td>Format</td><td>SDCC Relocatable object file (.rel)</td></tr>
+<tr><td>Compiler</td><td>SDCC v4.4 or newer</td></tr>
+</table>
 
 <br/>
 
@@ -12,27 +15,34 @@ Programming language: C and Z80 assembler
 
 ## Description
 
-This project is a library of functions for developing text-mode applications.
+C function library with functions for developing text-mode applications.
+Includes functions for screen initialization and printing of texts and numbers.
 
 Supports the following display modes:
 - Text 1 (screen 0, 40 columns) 
 - Text 2 (screen 0, 80 columns) Requires MSX with V9938 and BIOS that supports this mode.
 - Graphic 1 (screen 1, 32 columns)
 
-This library uses the functions of the MSX BIOS, so it is designed to create applications in ROM format or binaries on MSX BASIC.
+In this project you will find two libraries for different environments:
+- **textmode_MSXBIOS** Uses the MSX BIOS. It takes up very little memory. You can use it to develop applications in ROM format or programs that run from MSX BASIC environment.
+- **textmode_MSXDOS** Uses the MSX BIOS functions via inter-slot call (CALSLT). You can use it to develop applications for the MSX-DOS environment.
 
-It is designed to develop MSX applications using Small Device C Compiler (SDCC), although it is an opensource project. 
-Feel free to use part or all of it to adapt it to other systems or development environments.
+This library uses the functions of the MSX BIOS, so it is designed to develop applications for ROM or MSXBASIC environments, using the Small Device C Compiler [(SDCC)](http://sdcc.sourceforge.net/) cross compiler.
 
 You can access the documentation here with [`How to use the library`](docs/HOWTO.md).
 
 In the source code [`examples/`](examples/), you can find applications for testing and learning purposes.
 
-I have adapted a routine for converting a 16 Bits value to ASCII for printing numbers, extracted from the Baze collection [(WEB)](http://baze.sk/3sc/misc/z80bits.html#5.1). 
+These libraries are part of the [MSX fR3eL Project](https://github.com/mvac7/SDCC_MSX_fR3eL).
 
-This library is part of the [MSX fR3eL Project](https://github.com/mvac7/SDCC_MSX_fR3eL).
+This project is open source under the [MIT license](LICENSE).
+You can add part or all of this code in your application development or include it in other libraries/engines.
 
 Enjoy it!
+
+| NOTE |
+| :--- | 
+| For the number printing function, I have adapted a routine to convert a 16-bit value to ASCII taken from the Baze collection.<br/>[(WEB)](http://baze.sk/3sc/misc/z80bits.html#5.1) |
 
 <br/>
 
@@ -40,11 +50,25 @@ Enjoy it!
 
 ## History of versions:
 
+### textmode_MSXBIOS
+
 - v1.5 (24/02/2024) bchput recovery, add GetColumns, GetCursorRow and GetCursorColumn.
 - v1.4 (24/11/2023) Update to SDCC (4.1.12) Z80 calling conventions, add PrintLN function, remove bchput, and more improvements.
 - v1.3 (05/09/2019) Integer printing functions improved (PrintNumber & PrintFNumber). num2Dec16 becomes PrintFNumber.
 - v1.2 (03/04/2018)
 - v1.1 (27/02/2017)
+- v1.0 (??/??/????)
+
+<br/>
+
+### textmode_MSXDOS
+
+- v1.5 (22/10/2024) Update to SDCC (4.1.12) Z80 calling conventions, add functions: PrintLN, GetColumns, GetCursorRow and GetCursorColumn.
+- v1.4 (04/09/2019) Integer printing functions improved (PrintNumber & PrintFNumber). num2Dec16 becomes PrintFNumber
+- v1.3 (29/08/2019) nakeds and PrintNumber improvements
+- v1.2 (05/05/2018)
+- v1.1 (27/02/2017)
+- v1.0 (??/??/????)
 
 <br/>
 
@@ -52,7 +76,7 @@ Enjoy it!
 
 ## Requirements
 
-- [Small Device C Compiler (SDCC) v4.3](http://sdcc.sourceforge.net/)
+- [Small Device C Compiler (SDCC) v4.4](http://sdcc.sourceforge.net/)
 - [Hex2bin v2.5](http://hex2bin.sourceforge.net/)
 
 <br/>
@@ -88,30 +112,40 @@ In the git project [`examples/`](../examples/), you can find the source code of 
 
 <br/>
 
-### ExampleROM
+### Example01
 
-Simple example of the use of the library (used in the documentation).
+Simple example of how to use this library in the ROM environment (Example included in the documentation).
 
-[`examples/forDoc`](examples/forDoc)
+[`Sourcecode`](examples/forDoc)
 
 ![Example screenshot](docs/pics/ExampleROM_screenshot.png)
 
 <br/>
 
-### TestLib
+### Example02
+
+Simple example of how to use this library in the MSX-DOS environment (Example included in the documentation).
+
+[`Sourcecode`](examples/forDoc)
+
+![Example screenshot](docs/pics/ExampleROM_screenshot.png)
+
+<br/>
+
+### Example03
 
 Test the library functions in Text 1 (Screen 0 with 40 columns) and GRAPHIC 1 (Screen 1) modes of the TMS9918A.
 
-[`examples/testLib`](examples/testLib)
+[`Sourcecode`](examples/testLib)
 
 ![Example screenshot](docs/pics/testLib_screenshot.png)
 
 <br/>
 
-### Test80c
+### Example04
 
 Test the library functions in Text 2 mode (Screen 0 with 80 columns) of V9938 or higher.
 
-[`examples/test80c`](examples/test80c)
+[`Sourcecode`](examples/test80c)
 
 ![Example screenshot](docs/pics/test80c_screenshot.png)
