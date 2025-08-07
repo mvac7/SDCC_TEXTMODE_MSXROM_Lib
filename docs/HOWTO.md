@@ -1,4 +1,4 @@
-# How to use the TEXTMODE MSX ROM Library
+# How to use the TEXTMODE MSX SDCC Library
 
 | Attention! |
 | :---       |
@@ -35,10 +35,10 @@
 - [6 Code Example](#6-Code-Example)
 - [7 Appendices](#7-Appendices)
     - [7.1 Escape sequences](#71-Escape-sequences)
-	- [7.2 Other scape codes](#72-Other-scape-codes)
-	- [7.3 Extended Graphic Characters](#73-Extended-Graphic-Characters)
+	- [7.2 New line](#72-New-line)
+	- [7.3 Other scape codes](#73-Other-scape-codes)
+	- [7.4 Extended Graphic Characters](#74-Extended-Graphic-Characters)
 - [8 References](#8-References)
-
 
 <br/>
 
@@ -46,17 +46,24 @@
 
 ## 1 Description
 
-This project is a library of functions for creating aplications in text mode.
+C function library with functions for developing text-mode applications.
+Includes functions for screen initialization and printing of texts and numbers.
 
-Works in T1 (screen 0, 40 columns), T2 (screen 0, 80 columns), and G1 (screen 1, 32 columns) modes.
+Supports the following display modes:
+- Text1 (Screen 0, 40 columns) 
+- Text2 (Screen 0, 80 columns) Requires MSX with V9938 and BIOS that supports this mode.
+- Graphic1 (Screen 1, 32 columns)
 
-It uses the functions from the MSX BIOS, so it is designed to create applications in ROM format or binaries on MSX BASIC.
+In this project you will find two libraries for different environments:
+- **textmode_MSXBIOS** Uses the MSX BIOS. It takes up very little memory. You can use it to develop applications in ROM format or programs that run from MSX BASIC environment.
+- **textmode_MSXDOS** Uses the MSX BIOS functions via inter-slot call (CALSLT). You can use it to develop applications for the MSX-DOS environment.
 
-It is designed to develop MSX applications using Small Device C Compiler (SDCC), although it is an opensource project. Feel free to use part or all of it to adapt it to other systems or development environments.
+This library is designed to develop MSX applications using Small Device C Compiler [`SDCC`](http://sdcc.sourceforge.net/).
 
-I have adapted a routine for converting a 16 Bits value to ASCII for printing numbers, extracted from the Baze collection [(WEB)](http://baze.sk/3sc/misc/z80bits.html#5.1). 
+These libraries are part of the [MSX fR3eL Project](https://github.com/mvac7/SDCC_MSX_fR3eL).
 
-This library is part of the [MSX fR3eL Project](https://github.com/mvac7/SDCC_MSX_fR3eL).
+This project is open source under the [MIT license](LICENSE).
+You can add part or all of this code in your application development or include it in other libraries/engines.
 
 <br/>
 
@@ -64,7 +71,7 @@ This library is part of the [MSX fR3eL Project](https://github.com/mvac7/SDCC_MS
 
 ## 2 Requirements
 
-- [Small Device C Compiler (SDCC) v4.3](http://sdcc.sourceforge.net/)
+- [Small Device C Compiler (SDCC) v4.4](http://sdcc.sourceforge.net/)
 - [Hex2bin v2.5](http://hex2bin.sourceforge.net/)
 
 
@@ -371,52 +378,126 @@ void main(void)
 
 #### 5.2.1 Set GRAPHIC 1 Colors
 
-This mode allows you to display more colors than TEXT 1 mode, but with some limitations. You can only assign two colors (ink and background) every 8 tiles.
+32-column text mode allows for the display of more colors but with some limitations. 
+You can only assign two colors (ink and background) for each group of 8 tiles, a total of 32 values (Colour Table) for the 256 tiles.
 
 This library is not compiled with a function to change colors, but is included in the commented sources, to reduce the size of the library. 
-If you need it, you can uncomment it (in the source and header) and compile the library, or you can copy and paste this function into your project.
+If you need it, you can uncomment it (in the source and header) and compile the library, or you can copy-paste this function into your project.
+
+![G1 colors example](pics/Graphic1_colors.png)<br/>
+_Graphic1 colors example_
+
+##### Example:
+
+```c
+void main(void)
+{
+	COLOR(WHITE,DARK_BLUE,BLACK);
+	WIDTH(32);
+	SCREEN1();
+   
+	SetG1colors(48/8,CYAN,LIGHT_BLUE);	//7th octet for '0' to '7' character codes
+	SetG1colors(56/8,GRAY,LIGHT_BLUE);	//8th octet for '8' to '?' character codes
+
+	PRINT("0123456789:;<=>?");
+	
+__asm call 0x009F __endasm;	
+}
+```
+
+<br/>
+
+##### ROM or MSXBASIC
 
 ```c
 /* =============================================================================
- SetG1colors
-
- Description: 
-			Assigns colors to a group of GRAPHIC1 tiles.
-			ROM/MSX-BASIC environment
-		   
- Input:		(char) Octet. Group of 8 tiles.
-			(char) Ink color (0-15)
-			(char) Background color (0-15)      
- Output:   -
+SetG1colors
+Description: 
+		Assigns colors to a group of GRAPHIC1 tiles.
+		ROM/MSX-BASIC environment
+	   
+Input:	(char) Octet. Group of 8 tiles.
+		(char) Ink color (0-15)
+		(char) Background color (0-15)      
+Output:	-
 ============================================================================= */
-void SetG1colors(char octet, char INKcolor,char BGcolor)
+void SetG1colors(char octet, char INKcolor, char BGcolor)
 {
-  octet;    //A
-  INKcolor; //L
-  BGcolor;  //Stack	
+octet;		//A
+INKcolor;	//L
+BGcolor;	//Stack	
 __asm
-  push IX
-  ld   IX,#0
-  add  IX,SP
+	push IX
+	ld   IX,#0
+	add  IX,SP
 
-  ld   B,L	
+	ld   B,L	
 
-  ld   HL,#0x2000
-  ld   D,#0
-  ld   E,A
-  add  HL,DE
+	ld   HL,#0x2000
+	ld   D,#0
+	ld   E,A
+	add  HL,DE
 
-  ld   C,4(IX)
-  ld   A,B
-  SLA  A
-  SLA  A
-  SLA  A
-  SLA  A	
-  or   C	
+	ld   A,B
+	add  A
+	add  A
+	add  A
+	add  A	
+	or   4(IX)	
 
-  call  0x004D	;MSX BIOS WRTVRM - Writes data in VRAM
+	call  0x004D	//MSX BIOS WRTVRM - Writes data in VRAM
 
-  pop  IX
+	pop  IX
+__endasm;	
+}
+```
+
+<br/>
+
+##### MSX-DOS
+
+```c
+/* =============================================================================
+SetG1colors
+Description: 
+		Assigns colors to a group of GRAPHIC1 tiles.
+		MSX-DOS environment.
+	   
+Input:	(char) Octet. Group of 8 tiles.
+		(char) Ink color (0-15)
+		(char) Background color (0-15)      
+Output:	-
+============================================================================= */
+void SetG1colors(char octet, char INKcolor, char BGcolor)
+{
+octet;		//A
+INKcolor;	//L
+BGcolor;	//Stack	
+__asm
+	push IX
+	ld   IX,#0
+	add  IX,SP
+
+	ld   B,L	
+
+	ld   HL,#0x2000
+	ld   D,#0
+	ld   E,A
+	add  HL,DE
+
+	ld   A,B
+	add  A
+	add  A
+	add  A
+	add  A	
+	or   4(IX)	
+
+	ld   IX,#0x004D     //MSX BIOS   WRTVRM Writes data in VRAM
+	ld   IY,(#0xFCC0)   //System var EXPTBL-1 (FCC1h-1) main BIOS-ROM slot address
+	call 0x001C         //MSX BIOS   CALSLT Executes inter-slot call
+	ei
+
+	pop  IX
 __endasm;	
 }
 ```
@@ -442,63 +523,226 @@ You can find more extensive examples in the git project sources.
 
 <br/>
 
-### Source
+### 6.1 Example 1 ROM
+
+In this source code you will find a simple example of how to use this library in the ROM environment.
+
+Requires the following items:
+- Startup file for MSX 8/16K ROM [crt0_MSX816kROM4000](https://github.com/mvac7/SDCC_startup_MSX816kROM4000)
+- textmode_MSXBIOS Library
+
+<br/>
+
+And you need the following applications to compile and generate the final ROM:
+- [Small Device C Compiler (SDCC) v4.4](http://sdcc.sourceforge.net/)
+- [Hex2bin v2.5](http://hex2bin.sourceforge.net/)
+
+![Example screenshot](pics/Example01_01.png)
+
+<br/>
+
+#### Source Code
 ```c
-/* =====================================================
-   Example TEXTMODE MSX ROM Library (fR3eL Project)
-======================================================== */
+/* =============================================================================
+# Example01.c
 
-#include "../include/textmode_MSX.h"
+- Version: 1.0
+- Architecture: MSX
+- Format: 8K ROM
+- Programming language: C and Z80 assembler
+- Compiler: SDCC 4.4
 
-const char text01[] = "Example TEXTMODE Lib\n";
+## Description:
+	Simple example of the textmode_MSXBIOS Library (fR3eL Project)
+============================================================================= */
+#include "textmode_MSX.h"
+
+const char text01[] = "Example textmode_MSXBIOS Lib\n";
 const char text02[] = "Press a key to continue";
 
 void main(void)
 {
-  unsigned int uintValue=1234;
-  char charValue=71;
-  
-  COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
-  WIDTH(40);
-  SCREEN0();
-  
-  PrintLN(text01);
-  
-  PRINT("Line 1\n");
-  PrintLN("Line 2");
-  PrintLN("Line 3\n");
+	unsigned int uintValue=1234;
+	char charValue=71;
+
+	COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
+	WIDTH(40);
+	SCREEN0();
+
+	PrintLN(text01);
+
+	PRINT(">PRINT+\\n: ");
+	PRINT("Line 1\n");
+	
+	PRINT(">PrintLN: ");
+	PrintLN("Line 2");
+	
+	PrintLN("");					//print a new line (CR)
+
+	PrintLN(">Print Extended Graphic Characters");
+	PRINT("\1\x42");				//print smile (2 + 64) = 42 hexadecimal
+	
+	PrintLN("\n");					//print 2 Carriage Return (CR) with Line Feed (LF)
+
+	PRINT(">PrintNumber:");
+	PrintNumber(1024);
+
+	PRINT("\n>PrintFNumber:");
+	PrintFNumber(charValue,'0',4);	//"0071"
+
+	PRINT("\n>Print Integer:");
+	PrintFNumber(uintValue,32,5);	//" 1234"
+
+	PRINT("\n>Print cut number:");
+	PrintFNumber(uintValue,32,2);	//"34"
+	
+	PrintLN("\n");
+	
+	//Draw a box
+	PrintLN("\1\x58\1\x57\1\x57\1\x57\1\x57\1\x59");
+	PrintLN("\1\x56    \1\x56");
+	PrintLN("\1\x5A\1\x57\1\x57\1\x57\1\x57\1\x5B");
+
+	PrintLN("\n>LOCATE(8,20)+PRINT");
+	LOCATE(8,20);
+	PRINT("a located text");
+	
+	PrintLN("\n");
+	PRINT(text02);
     
-  PRINT("\1\x42");   //print smile (2 + 64) = 42 hexadecimal
-  PRINT("\n");
-  
-  PRINT("\n>PrintNumber:");
-  PrintNumber(1024);
-  
-  PRINT("\n>PrintFNumber:");
-  PrintFNumber(charValue,'0',4); //"0071"
-  
-  PRINT("\n>Print Integer:");
-  PrintFNumber(uintValue,32,5); //" 1234"
-  
-  PRINT("\n>Print cut number:");
-  PrintFNumber(uintValue,32,2); //"34"
-  
-  LOCATE(8,20);
-  PRINT(text02);
-    
-__asm   
-  call  0x009F ;BIOS CHGET One character input (waiting)
-  rst   0
-__endasm;
+// execute BIOS CHGET - One character input (waiting)
+__asm call 0x009F __endasm;	
 }
 ```
 
-### Output
-
-![Example screenshot](pics/ExampleROM_screenshot.png)
-
+[`Sourcecode project`](Example01)
 
 <br/>
+
+#### For compile:
+
+First you must compile the source with SDCC as follows:
+
+```
+sdcc -mz80 --code-loc 0x4020 --data-loc 0xC000 --use-stdout --no-std-crt0 crt0_MSX816kROM4000.rel textmode_MSXBIOS.rel Example01.c
+```
+
+If no error is displayed, you should run hex2bin to convert the SDCC output to a binary file.
+
+```
+hex2bin -e ROM -l 2000 Example01.ihx
+```
+
+<br/>
+
+
+
+### 6.2 Example 2 MSX-DOS
+
+In this source code you will find a simple example of how to use this library in the MSX-DOS environment.
+
+Requires the following items:
+- Startup file for MSX-DOS environment [crt0_MSXDOS.rel](https://github.com/mvac7/SDCC_startup_MSXDOS)
+- textmode_MSXDOS Library
+
+<br/>
+
+And you need the following applications to compile and generate the final ROM:
+- [Small Device C Compiler (SDCC) v4.4](http://sdcc.sourceforge.net/)
+- [Hex2bin v2.5](http://hex2bin.sourceforge.net/)
+
+![Example screenshot](pics/Example02_01.png)
+
+
+#### Source Code
+
+```c
+/* =============================================================================
+# Example02.c
+
+- Version: 1.0
+- Architecture: MSX
+- Format: MSX-DOS
+- Programming language: C and Z80 assembler
+- Compiler: SDCC 4.4
+
+## Description:
+	Simple example of the textmode_MSXDOS Library (fR3eL Project)
+============================================================================= */
+#include "textmode_MSX.h"
+
+const char text01[] = "Example textmode_MSXDOS Lib\n";
+
+char main(void)
+{
+	unsigned int uintValue=1234;
+	char charValue=71;
+
+	COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
+	WIDTH(40);
+	SCREEN0();
+
+	PrintLN(text01);
+
+	PRINT(">PRINT+\\n: ");
+	PRINT("Line 1\n");
+	
+	PRINT(">PrintLN: ");
+	PrintLN("Line 2");
+	
+	PrintLN("");					//print a new line (CR)
+
+	PrintLN(">Print Extended Graphic Characters");
+	PRINT("\1\x42");				//print smile (2 + 64) = 42 hexadecimal
+	
+	PrintLN("\n");					//print 2 Carriage Return (CR) with Line Feed (LF)
+
+	PRINT(">PrintNumber:");
+	PrintNumber(1024);
+
+	PRINT("\n>PrintFNumber:");
+	PrintFNumber(charValue,'0',4);	//"0071"
+
+	PRINT("\n>Print Integer:");
+	PrintFNumber(uintValue,32,5);	//" 1234"
+
+	PRINT("\n>Print cut number:");
+	PrintFNumber(uintValue,32,2);	//"34"
+	
+	PrintLN("\n");
+	
+	//Draw a box
+	PrintLN("\1\x58\1\x57\1\x57\1\x57\1\x57\1\x59");
+	PrintLN("\1\x56    \1\x56");
+	PrintLN("\1\x5A\1\x57\1\x57\1\x57\1\x57\1\x5B");
+
+	PrintLN("");
+	PRINT("End");
+	
+	return 0;						//Exit to DOS
+}
+```
+
+[`Sourcecode project`](Example02)
+
+<br/>
+
+#### For compile:
+
+First you must compile the source with SDCC as follows:
+
+```
+sdcc -mz80 -o build\ --code-loc 0x0170 --data-loc 0 --use-stdout --no-std-crt0 crt0_MSXDOS.rel textmode_MSXDOS.rel Example02.c
+```
+
+If no error is displayed, you should run hex2bin to convert the SDCC output to a binary file.
+
+```
+hex2bin -e COM build\Example02.ihx
+```
+
+<br/>
+
 
 ---
 
@@ -524,43 +768,7 @@ __endasm;
  
 <br/>
 
-### 7.2 Other scape codes
-
-- `\xhh` Print in the output the character/code given in the hexadecimal value (hh).
-
-- `\nnn` Print in the output the character/code given in the octal value (nnn).
-
-<br/>
-
-### 7.3 Extended Graphic Characters
-
-To print the graphic characters that are in the first positions of the MSX system graphic set (overlapping with the control codes in text mode), 
-you will have to use add the value 1 after the character code.
-
-`\1` + `\xhh`
-
-It must be taken into account that the character code is equivalent to the corresponding one of the graphic set added to 64.
-
-```c
-  PRINT("\1\x42");   //print smile (2 + 64) = 42 hexadecimal
-```
-
-**Example:**
-
-```c
-//Draw a box
-  PrintLN("\1\x58\1\x57\1\x57\1\x59");
-  PrintLN("\1\x56  \1\x56");
-  PrintLN("\1\x5A\1\x57\1\x57\1\x5B");
-```
-
-![Extended Graphic Characters Table](pics/extended_graphic_characters.png)<br/>
-_Extended Graphic Characters Table (By [MSX Resource Center](https://www.msx.org/wiki/MSX_Characters_and_Control_Codes#International_codes))_
-
-
-<br/>
-
-#### New line
+### 7.2 New line
 
 In the MSX system, in order to process a New Line, it requires the use of two control codes: Carriage Return (0x0D) and Line Feed (0x0A).
 If we add a `\n` to a text string in C, when compiling the code of an LF will be obtained, so in execution mode we would obtain a positioning of the cursor at the beginning of the line but without the jump to the next line .
@@ -577,6 +785,43 @@ Output:
 Hello World!
 Hello everybody!
 ```
+ 
+<br/>
+
+### 7.3 Other scape codes
+
+- `\xhh` Print in the output the character/code given in the hexadecimal value (hh).
+
+- `\nnn` Print in the output the character/code given in the octal value (nnn).
+
+<br/>
+
+### 7.4 Extended Graphic Characters
+
+To print the graphic characters that are in the first positions of the MSX system graphic set (overlapping with the control codes in text mode), 
+you will have to use add the value 1 after the character code.
+
+`\1` + `\xhh`
+
+It must be taken into account that the character code is equivalent to the corresponding one of the graphic set added to 64.
+
+```c
+  PRINT("\1\x42");   //print smile (2 + 64) = 42 hexadecimal
+```
+
+#### Example:
+
+```c
+	//Draw a box
+	PrintLN("\1\x58\1\x57\1\x57\1\x57\1\x57\1\x59");
+	PrintLN("\1\x56    \1\x56");
+	PrintLN("\1\x5A\1\x57\1\x57\1\x57\1\x57\1\x5B");
+```
+
+#### Extended Graphic Characters Table
+![Extended Graphic Characters Table](pics/extended_graphic_characters.png)<br/>
+_(By [MSX Resource Center](https://www.msx.org/wiki/MSX_Characters_and_Control_Codes#International_codes))_
+
 
 <br/>
 
