@@ -384,7 +384,7 @@ You can only assign two colors (ink and background) for each group of 8 tiles, a
 This library is not compiled with a function to change colors, but is included in the commented sources, to reduce the size of the library. 
 If you need it, you can uncomment it (in the source and header) and compile the library, or you can copy-paste this function into your project.
 
-![G1 colors example](pics/Graphic1_colors.png)
+![G1 colors example](pics/Graphic1_colors.png)<br/>
 _Graphic1 colors example_
 
 ##### Example:
