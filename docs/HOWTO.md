@@ -1,4 +1,4 @@
-# How to use the TEXTMODE MSX ROM Library
+# How to use the MSX SDCC Library
 
 | Attention! |
 | :---       |
@@ -378,11 +378,34 @@ void main(void)
 
 #### 5.2.1 Set GRAPHIC 1 Colors
 
-This mode allows you to display more colors than TEXT 1 mode, but with some limitations. You can only assign two colors (ink and background) every 8 tiles.
+32-column text mode allows for the display of more colors but with some limitations. 
+You can only assign two colors (ink and background) for each group of 8 tiles, a total of 32 values (Colour Table) for the 256 tiles.
 
 This library is not compiled with a function to change colors, but is included in the commented sources, to reduce the size of the library. 
-If you need it, you can uncomment it (in the source and header) and compile the library, or you can copy and paste this function into your project.
+If you need it, you can uncomment it (in the source and header) and compile the library, or you can copy-paste this function into your project.
 
+![G1 colors example](pics/Graphic1_colors.png)
+_Graphic1 colors example_
+
+##### Example:
+
+```c
+void main(void)
+{
+	COLOR(WHITE,DARK_BLUE,BLACK);
+	WIDTH(32);
+	SCREEN1();
+   
+	SetG1colors(48/8,CYAN,LIGHT_BLUE);	//7th octet for '0' to '7' character codes
+	SetG1colors(56/8,GRAY,LIGHT_BLUE);	//8th octet for '8' to '?' character codes
+
+	PRINT("0123456789:;<=>?");
+	
+__asm call 0x009F __endasm;	
+}
+```
+
+<br/>
 
 ##### ROM or MSXBASIC
 
