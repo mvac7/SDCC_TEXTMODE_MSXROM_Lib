@@ -12,7 +12,7 @@
 ============================================================================= */
 #include "textmode_MSX.h"
 
-const char text01[] = "Example TEXTMODE Lib\n";
+const char text01[] = "Example textmode_MSXBIOS Lib\n";
 const char text02[] = "Press a key to continue";
 
 void main(void)
@@ -26,16 +26,15 @@ void main(void)
 
 	PrintLN(text01);
 
-	PRINT("PRINT:");
+	PRINT(">PRINT+\\n: ");
 	PRINT("Line 1\n");
 	
-	PRINT("PrintLN:");
+	PRINT(">PrintLN: ");
 	PrintLN("Line 2");
 	
-	PrintLN("Line 3");
-
 	PrintLN("");					//print a new line (CR)
 
+	PrintLN(">Print Extended Graphic Characters");
 	PRINT("\1\x42");				//print smile (2 + 64) = 42 hexadecimal
 	
 	PrintLN("\n");					//print 2 Carriage Return (CR) with Line Feed (LF)
@@ -51,8 +50,19 @@ void main(void)
 
 	PRINT("\n>Print cut number:");
 	PrintFNumber(uintValue,32,2);	//"34"
+	
+	PrintLN("\n");
+	
+	//Draw a box
+	PrintLN("\1\x58\1\x57\1\x57\1\x57\1\x57\1\x59");
+	PrintLN("\1\x56    \1\x56");
+	PrintLN("\1\x5A\1\x57\1\x57\1\x57\1\x57\1\x5B");
 
+	PrintLN("\n>LOCATE(8,20)+PRINT");
 	LOCATE(8,20);
+	PRINT("a located text");
+	
+	PrintLN("\n");
 	PRINT(text02);
     
 // execute BIOS CHGET - One character input (waiting)

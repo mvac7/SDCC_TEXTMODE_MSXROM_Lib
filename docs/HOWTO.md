@@ -514,7 +514,9 @@ And you need the following applications to compile and generate the final ROM:
 - [Small Device C Compiler (SDCC) v4.4](http://sdcc.sourceforge.net/)
 - [Hex2bin v2.5](http://hex2bin.sourceforge.net/)
 
-![Example screenshot](pics/ExampleROM_screenshot.png)
+![Example screenshot](pics/Example01_01.png)
+
+[`Sourcecode`](Example01)
 
 <br/>
 
@@ -534,7 +536,7 @@ And you need the following applications to compile and generate the final ROM:
 ============================================================================= */
 #include "textmode_MSX.h"
 
-const char text01[] = "Example TEXTMODE Lib\n";
+const char text01[] = "Example textmode_MSXBIOS Lib\n";
 const char text02[] = "Press a key to continue";
 
 void main(void)
@@ -548,16 +550,15 @@ void main(void)
 
 	PrintLN(text01);
 
-	PRINT("PRINT:");
+	PRINT(">PRINT+\\n: ");
 	PRINT("Line 1\n");
 	
-	PRINT("PrintLN:");
+	PRINT(">PrintLN: ");
 	PrintLN("Line 2");
 	
-	PrintLN("Line 3");
-
 	PrintLN("");					//print a new line (CR)
 
+	PrintLN(">Print Extended Graphic Characters");
 	PRINT("\1\x42");				//print smile (2 + 64) = 42 hexadecimal
 	
 	PrintLN("\n");					//print 2 Carriage Return (CR) with Line Feed (LF)
@@ -573,8 +574,19 @@ void main(void)
 
 	PRINT("\n>Print cut number:");
 	PrintFNumber(uintValue,32,2);	//"34"
+	
+	PrintLN("\n");
+	
+	//Draw a box
+	PrintLN("\1\x58\1\x57\1\x57\1\x57\1\x57\1\x59");
+	PrintLN("\1\x56    \1\x56");
+	PrintLN("\1\x5A\1\x57\1\x57\1\x57\1\x57\1\x5B");
 
+	PrintLN("\n>LOCATE(8,20)+PRINT");
 	LOCATE(8,20);
+	PRINT("a located text");
+	
+	PrintLN("\n");
 	PRINT(text02);
     
 // execute BIOS CHGET - One character input (waiting)
@@ -616,12 +628,14 @@ And you need the following applications to compile and generate the final ROM:
 - [Small Device C Compiler (SDCC) v4.4](http://sdcc.sourceforge.net/)
 - [Hex2bin v2.5](http://hex2bin.sourceforge.net/)
 
-![Example screenshot](pics/TEST_0004.png)
+![Example screenshot](pics/Example02_01.png)
+
+[`Sourcecode`](Example02)
 
 #### Source
 
 ```c
-* =============================================================================
+/* =============================================================================
 # Example02.c
 
 - Version: 1.0
@@ -642,18 +656,21 @@ char main(void)
 	unsigned int uintValue=1234;
 	char charValue=71;
 
+	COLOR(WHITE,DARK_BLUE,LIGHT_BLUE);
+	WIDTH(40);
+	SCREEN0();
+
 	PrintLN(text01);
 
-	PRINT("PRINT:");
+	PRINT(">PRINT+\\n: ");
 	PRINT("Line 1\n");
 	
-	PRINT("PrintLN:");
+	PRINT(">PrintLN: ");
 	PrintLN("Line 2");
 	
-	PrintLN("Line 3");
-
 	PrintLN("");					//print a new line (CR)
 
+	PrintLN(">Print Extended Graphic Characters");
 	PRINT("\1\x42");				//print smile (2 + 64) = 42 hexadecimal
 	
 	PrintLN("\n");					//print 2 Carriage Return (CR) with Line Feed (LF)
@@ -669,11 +686,18 @@ char main(void)
 
 	PRINT("\n>Print cut number:");
 	PrintFNumber(uintValue,32,2);	//"34"
+	
+	PrintLN("\n");
+	
+	//Draw a box
+	PrintLN("\1\x58\1\x57\1\x57\1\x57\1\x57\1\x59");
+	PrintLN("\1\x56    \1\x56");
+	PrintLN("\1\x5A\1\x57\1\x57\1\x57\1\x57\1\x5B");
 
-	PrintLN("\n");					//print 2 CRLF
+	PrintLN("");
 	PRINT("End");
 	
-	return 0;
+	return 0;						//Exit to DOS
 }
 ```
 
@@ -764,10 +788,10 @@ It must be taken into account that the character code is equivalent to the corre
 #### Example:
 
 ```c
-//Draw a box
-  PrintLN("\1\x58\1\x57\1\x57\1\x59");
-  PrintLN("\1\x56  \1\x56");
-  PrintLN("\1\x5A\1\x57\1\x57\1\x5B");
+	//Draw a box
+	PrintLN("\1\x58\1\x57\1\x57\1\x57\1\x57\1\x59");
+	PrintLN("\1\x56    \1\x56");
+	PrintLN("\1\x5A\1\x57\1\x57\1\x57\1\x57\1\x5B");
 ```
 
 #### Extended Graphic Characters Table

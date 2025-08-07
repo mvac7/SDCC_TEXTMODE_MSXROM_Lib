@@ -31,8 +31,6 @@ Use this library for developing MSX applications using Small Device C Compiler [
 
 You can access the documentation here with [`How to use the library`](docs/HOWTO.md).
 
-In the source code [`examples/`](examples/), you can find applications for testing and learning purposes.
-
 These libraries are part of the [MSX fR3eL Project](https://github.com/mvac7/SDCC_MSX_fR3eL).
 
 This project is open source under the [MIT license](LICENSE).
@@ -112,40 +110,45 @@ Within the version directories by environment, you'll find programs I used for l
 
 <br/>
 
-### Example01
+### textmode_MSXBIOS
 
-Simple example of how to use this library in the ROM environment (Example included in the documentation).
-
-[`Sourcecode`](examples/forDoc)
-
-![Example screenshot](docs/pics/ExampleROM_screenshot.png)
-
-<br/>
-
-### Example02
-
-Simple example of how to use this library in the MSX-DOS environment (Example included in the documentation).
-
-[`Sourcecode`](examples/forDoc)
-
-![Example screenshot](docs/pics/ExampleROM_screenshot.png)
-
-<br/>
-
-### Example03
+#### testLib 
 
 Test the library functions in Text 1 (Screen 0 with 40 columns) and GRAPHIC 1 (Screen 1) modes of the TMS9918A.
 
-[`Sourcecode`](examples/testLib)
+[`Sourcecode`](MSXBIOS/examples/testLib)
 
-![Example screenshot](docs/pics/testLib_screenshot.png)
+![Example screenshot](docs/pics/TESTLIB_ROM01.png)
+![Example screenshot](docs/pics/TESTLIB_ROM02.png)
+![Example screenshot](docs/pics/TESTLIB_ROM03.png)
+![Example screenshot](docs/pics/TESTLIB_ROM04.png)
 
 <br/>
 
-### Example04
+#### test80c
 
 Test the library functions in Text 2 mode (Screen 0 with 80 columns) of V9938 or higher.
 
-[`Sourcecode`](examples/test80c)
+[`Sourcecode`](MSXBIOS/examples/test80c)
 
-![Example screenshot](docs/pics/test80c_screenshot.png)
+![Example screenshot](docs/pics/TEST80C_ROM01.png)
+
+
+<br/>
+
+### textmode_MSXDOS
+
+#### testLib
+
+Test the library functions in Text 1 (Screen 0 with 40 columns) and GRAPHIC 1 (Screen 1) modes of the TMS9918A.
+
+[`Sourcecode`](MSXDOS/examples/testLib)
+
+<br/>
+
+#### test80c
+
+Test the library functions in Text 2 mode (Screen 0 with 80 columns) of V9938 or higher.
+
+[`Sourcecode`](MSXDOS/examples/test80c)
+
