@@ -516,11 +516,9 @@ And you need the following applications to compile and generate the final ROM:
 
 ![Example screenshot](pics/Example01_01.png)
 
-[`Sourcecode`](Example01)
-
 <br/>
 
-#### Source
+#### Source Code
 ```c
 /* =============================================================================
 # Example01.c
@@ -594,6 +592,8 @@ __asm call 0x009F __endasm;
 }
 ```
 
+[`Sourcecode project`](Example01)
+
 <br/>
 
 #### For compile:
@@ -630,9 +630,8 @@ And you need the following applications to compile and generate the final ROM:
 
 ![Example screenshot](pics/Example02_01.png)
 
-[`Sourcecode`](Example02)
 
-#### Source
+#### Source Code
 
 ```c
 /* =============================================================================
@@ -700,6 +699,8 @@ char main(void)
 	return 0;						//Exit to DOS
 }
 ```
+
+[`Sourcecode project`](Example02)
 
 <br/>
 

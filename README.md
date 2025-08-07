@@ -119,7 +119,7 @@ Test the library functions in Text 1 (Screen 0 with 40 columns) and GRAPHIC 1 (S
 [`Sourcecode`](MSXBIOS/examples/testLib)
 
 ![Example screenshot](docs/pics/TESTLIB_ROM01.png)
-![Example screenshot](docs/pics/TESTLIB_ROM02.png)
+![Example screenshot](docs/pics/TESTLIB_ROM02.png)<br/>
 ![Example screenshot](docs/pics/TESTLIB_ROM03.png)
 ![Example screenshot](docs/pics/TESTLIB_ROM04.png)
 
