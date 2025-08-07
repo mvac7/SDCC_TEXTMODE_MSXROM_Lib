@@ -1,4 +1,4 @@
-# How to use the MSX SDCC Library
+# How to use the TEXTMODE MSX SDCC Library
 
 | Attention! |
 | :---       |
